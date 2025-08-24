@@ -34,7 +34,7 @@ keys:
 
 graves:
   world: "dungeon"
-  material: "OBSIDIAN"
+  material: "OBSIDIAN" # Dejar JUGADOR para poner la cabeza del jugador
   holo: "&cTumba de {player} &7- &e{time}"
 
 messages:
