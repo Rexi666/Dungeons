@@ -1,0 +1,49 @@
+keys:
+  normal:
+    material: TRIPWIRE_HOOK
+    name: "&5Key Normal"
+    lore:
+      - ""
+      - "&7Key normal"
+    rewards:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+  legendaria:
+    material: TRIPWIRE_HOOK
+    name: "&6Key Legendaria"
+    lore:
+      - ""
+      - "&7Key legendaria"
+    rewards:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+
+messages:
+  no_permission: "&cNo tienes permiso para ejecutar ese comando"
+  usage: "Uso: /dungeon <reload|givekey|spawnchests>"
+  reload: "&aConfiguración recargada"
+  key: "&aHas dado una llave {key} a {player}"
+  wrong_key_type: "&cEsa llave no existe"
+  wrong_player: "&cEse jugador no está conectado"
+  usage_key: "&cUso: /dungeon givekey <jugador> <key> [cantidad]"
+  usage_chest: "&cUso: /dungeon spawnchests <x> <y> <z> <world>"
+  wrong_world: "&cEl mundo especificado no existe"
+  wrong_coords: "&cLas coordenadas deben ser números válidos"
+  chest_spawned: "&aSe ha spawneado un cofre en {x},{y},{z}. Mundo: {world}"
+  key_needed: "&cNecesitas una llave para abrir este cofre"
+  no_rewards: "&cNo hay recompensas configuradas para esta llave"
+  chest_opened: "&a¡Has abierto un cofre con tu llave!"
