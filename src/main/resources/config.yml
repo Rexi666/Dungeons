@@ -32,6 +32,11 @@ keys:
         - "give {player} netherite_shovel 1"
         - "give {player} netherite_chestplate 1"
 
+graves:
+  world: "dungeon"
+  material: "OBSIDIAN"
+  holo: "&cTumba de {player} &7- &e{time}"
+
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
   usage: "Uso: /dungeon <reload|givekey|spawnchests>"
@@ -47,3 +52,6 @@ messages:
   key_needed: "&cNecesitas una llave para abrir este cofre"
   no_rewards: "&cNo hay recompensas configuradas para esta llave"
   chest_opened: "&a¡Has abierto un cofre con tu llave!"
+  grave_created: "&6Se ha creado tu tumba. Tienes 5 minutos para recuperarla."
+  no_grave: "&cAún no puedes abrir esta tumba. Solo el dueño puede hacerlo mientras tenga tiempo."
+  grave_taken: "&aHas recogido los objetos de la tumba"
