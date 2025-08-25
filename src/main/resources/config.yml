@@ -91,7 +91,7 @@ menu:
         - "&7- Tomahok"
         - "&7- Ragnarok"
     fletcher:
-      name: "&fArquero"
+      name: "&bArquero"
       material: ARROW
       slot: 23
       lore:
@@ -99,7 +99,7 @@ menu:
         - ""
         - "&7- Disparo explosivo"
         - "&7- Arco ametralladora"
-    tanque:
+    tank:
       name: "&4Tanque"
       material: ANVIL
       slot: 24
@@ -109,6 +109,88 @@ menu:
         - "&7- Vida y defensa extra"
         - "&7- Castillo de piedra"
         - "&7- Sismo"
+
+classes: # Cooldown en segundos
+  world: "dungeon"
+  healer:
+    abilities:
+      regeneracion: # Regeneración continua
+        enabled: true
+        name: "&dRegeneración"
+      circulo_curación: # Cura a las personas que estén en el área
+        enabled: true
+        name: "&dCírculo de curación"
+  mage:
+    abilities:
+      ovejas_guiadas: # Ovejas que explotan al llegar al mob. Lanzar con click derecho de espada
+        enabled: true
+        name: "&cOvejas guiadas"
+        cooldown: 10
+      tormenta_electrica: # Caen rayos al mob. Lanzar con shift-click derecho de espada
+        enabled: true
+        name: "&cTormenta eléctrica"
+        cooldown: 20
+  berserker:
+    abilities:
+      tomahok: # Tira un hacha al enemigo que le causa daño. Lanzar con click derecho de hacha
+        enabled: true
+        name: "&eTomahok"
+        cooldown: 15
+      ragnarok: # Regeneración, velocidad y armadura extra
+        enabled: true
+        name: "&eRagnarok"
+  fletcher:
+    abilities:
+      disparo_explosivo: # Aleatoriamente lanza una flecha que explota
+        enabled: true
+        name: "&bDisparo explosivo"
+        probability: 20 # sobre 100
+      ametralladora: # Dispara flechas del inventario de forma rápida. Click izquierdo de arco
+        enabled: true
+        name: "&bAmetralladora"
+        cooldown: 20
+        arrows: 10
+  tank:
+    abilities:
+      vida_defensa: # Vida y defensa extra
+        enabled: true
+        name: "&4Vida y defensa extra"
+      castillo_piedra: # Sube la defensa. Click derecho de espada
+        enabled: true
+        name: "&4Castillo de piedra"
+        cooldown: 15
+        time: 10
+      sismo: # Terremoto que hace daño mobs. Shift-Click derecho de espada
+        enabled: true
+        name: "&4Sismo"
+        cooldown: 20
+
+dungeons:
+  players:
+    min: 1
+    max: 5
+  bosses:
+    jungla:
+      cords: 708 158 299 dungeon
+      boss: x
+    castillo:
+      cords: -679 151 1097 dungeon
+      boss: x
+    nieve:
+      cords: -1981 67 -1188 dungeon
+      boss: x
+    cerezo:
+      cords: 1247 72 -1210 dungeon
+      boss: x
+    desierto:
+      cords: 905 75 2162 dungeon
+      boss: x
+    derecha:
+      cords: 1666 63 1329 dungeon
+      boss: x
+    mar:
+      cords: 2346 148 508 dungeon
+      boss: x
 
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
@@ -132,3 +214,22 @@ messages:
   menu_player: "&aAbierto el menú para &e{player}"
   class_chosen: "&aHas escogido la clase {class}"
   ninguna_clase: "&cNinguna"
+  start_command: "&aHas iniciado la dungeon &b{dungeon}"
+  start_already: "&cLa dungeon ya estaba iniciada"
+  usage_start: "&cUso: /dungeon start <dungeon>"
+  forcestop_command: "&aHas forzado la parada de la dungeon &b{dungeon}"
+  forcestop_already: "&cNo hay ninguna dungeon en progreso"
+  usage_forcestop: "&cUso: /dungeon forcestop <dungeon>"
+  usage_join: "&cUso: /dungeon join <dungeon> [jugador]"
+  joined: "&aHas entrado en la dungeon &b{dungeon}"
+  broadcast_join: "&7[&dDUNGEONS&7] &b{player} &eha entrado en la dungeon &b{dungeon} &7({current}/{max})"
+  join_forced: "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}"
+  join_nodungeon: "&cIntentaste entrar en la dungeon {dungeon} pero no existe"
+  join_max: "&cLa dungeon a la que intentaste entrar está llena"
+  join_already: "&cYa estás en una dungeon. Usa &b/dungeon leave &cpara salir"
+  join_started: "&cEsa dungeon ya está en una incursión activa"
+  usage_leave: "&cUso: /dungeon leave [jugador]"
+  leave_forced: "&aForzando a &b{player} &aa salir de la dungeon"
+  leaved: "&aHas salido de la dungeon &b{dungeon}"
+  broadcast_leave: "&7[&dDUNGEONS&7] &b{player} &eha salido de la dungeon &b{dungeon} &7({current}/{max})"
+  force_selectclass: "&cTienes que seleccionar una clase!"

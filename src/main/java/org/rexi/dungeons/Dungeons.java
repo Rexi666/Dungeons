@@ -10,6 +10,7 @@ import org.rexi.dungeons.database.DatabaseManager;
 import org.rexi.dungeons.listeners.ChestListener;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
+import org.rexi.dungeons.manager.GameManager;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public final class Dungeons extends JavaPlugin {
     private DatabaseManager databaseManager;
 
     public final Map<UUID, String> playerClass = new HashMap<>();
+
+    // poner todos los dungeons en false
 
     @Override
     public void onEnable() {
@@ -52,6 +55,11 @@ public final class Dungeons extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(graveListener, this);
 
         Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
+
+        // Game manager
+
+        Bukkit.getPluginManager().registerEvents(new GameManager(), this);
+        GameManager.loadPossibleDungeons();
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha activado correctamente").color(NamedTextColor.GREEN));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
