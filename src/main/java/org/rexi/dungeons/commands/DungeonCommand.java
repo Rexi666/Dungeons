@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.rexi.dungeons.Dungeons;
+import org.rexi.dungeons.menu.ClassMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,6 +166,27 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             plugin.getConfig().getString("messages.wrong_coords", "&cLas coordenadas deben ser números válidos")));
                 }
             }
+            case "menu" -> {
+                if (!(sender instanceof Player player)) {
+                    if (args.length < 2) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.usage_menu", "&cUso: /dungeon menu [jugador]")));
+                        return true;
+                    } else {
+                        Player target = Bukkit.getPlayerExact(args[1]);
+                        ClassMenu.openMenu(target);
+                    }
+                } else {
+                    if (args.length == 1) {
+                        ClassMenu.openMenu(player);
+                        return true;
+                    } else {
+                        Player target = Bukkit.getPlayerExact(args[1]);
+                        ClassMenu.openMenu(target);
+                        return true;
+                    }
+                }
+            }
             default -> sender.sendMessage(deserialize(
                     plugin.getConfig().getString("messages.usage", "Uso: /dungeon <reload|givekey|spawnchests>")));
         }
@@ -176,7 +198,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         if (!sender.hasPermission("dungeon.command")) return Collections.emptyList();
 
         if (args.length == 1) {
-            return Arrays.asList("reload", "givekey", "spawnchests");
+            return Arrays.asList("reload", "givekey", "spawnchests", "menu");
         }
 
         if (args[0].equalsIgnoreCase("givekey")) {
@@ -191,6 +213,17 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 if (plugin.getConfig().isConfigurationSection("keys")) {
                     return new ArrayList<>(plugin.getConfig().getConfigurationSection("keys").getKeys(false));
                 }
+            }
+        }
+
+        if (args[0].equalsIgnoreCase("menu")) {
+            if (args.length == 2) {
+                // autocompletar jugadores online
+                List<String> players = new ArrayList<>();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    players.add(p.getName());
+                }
+                return players;
             }
         }
 

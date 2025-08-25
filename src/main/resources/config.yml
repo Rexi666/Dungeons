@@ -37,6 +37,70 @@ graves:
   material: "OBSIDIAN" # Dejar JUGADOR para poner la cabeza del jugador
   holo: "&cTumba de {player} &7- &e{time}"
 
+menu:
+  title: "&fElige tu clase"
+  info:
+    general:
+      name: "&7Información"
+      material: BOOK
+      slot: 4
+      lore:
+        - "&7Escoge tu clase"
+        - ""
+        - "&7Actualmente: {class}"
+    close:
+      name: "&cCerrar menú"
+      material: BARRIER
+      slot: 49
+      lore: []
+  classes:
+    healer:
+      name: "&dCurandero"
+      material: GOLDEN_APPLE
+      slot: 20
+      lore:
+        - "&7Nivel: {level}"
+        - ""
+        - "&7- Regeneración"
+        - "&7- Círculo de curación"
+    mage:
+      name: "&cMago"
+      material: BLAZE_ROD
+      slot: 21
+      lore:
+        - "&7Nivel: {level}"
+        - ""
+        - "&7- Ovejas guiadas"
+        - "&7- Tormenta eléctrica"
+    berserker:
+      name: "&eBerserker"
+      material: IRON_AXE
+      slot: 22
+      lore:
+        - "&7Nivel: {level}"
+        - ""
+        - "&7- Tomahok"
+        - "&7- Ragnarok"
+    fletcher:
+      name: "&fArquero"
+      material: ARROW
+      slot: 23
+      lore:
+        - "&7Nivel: {level}"
+        - ""
+        - "&7- Disparo explosivo"
+        - "&7- Arco ametralladora"
+    tanque:
+      name: "&4Tanque"
+      material: ANVIL
+      slot: 24
+      lore:
+        - "&7Nivel: {level}"
+        - ""
+        - "&7- Vida y defensa extra"
+        - "&7- Castillo de piedra"
+        - "&7- Sismo"
+
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
   usage: "Uso: /dungeon <reload|givekey|spawnchests>"
@@ -55,3 +119,7 @@ messages:
   grave_created: "&6Se ha creado tu tumba. Tienes 5 minutos para recuperarla."
   no_grave: "&cAún no puedes abrir esta tumba. Solo el dueño puede hacerlo mientras tenga tiempo."
   grave_taken: "&aHas recogido los objetos de la tumba"
+  usage_menu: "&cUso: /dungeon menu [jugador]"
+  menu_player: "&aAbierto el menú para &e{player}"
+  class_chosen: "&aHas escogido la clase {class}"
+  ninguna_clase: "&cNinguna"
