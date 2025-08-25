@@ -66,7 +66,7 @@ public class ClassMenu {
 
         ConfigurationSection infoSec = getConfig().getConfigurationSection("menu.info");
         if (infoSec != null) {
-            for (String key : itemsSec.getKeys(false)) {
+            for (String key : infoSec.getKeys(false)) {
                 String path = "menu.info."+key;
                 String material = getConfig().getString(path + ".material", "CHEST");
                 String name = getConfig().getString(path + ".name", "&fItem");
