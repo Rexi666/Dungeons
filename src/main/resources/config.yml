@@ -1,3 +1,12 @@
+database:
+  type: sqlite #Database type, can be 'sqlite' or 'mysql'.
+  mysql: #MySQL configuration. Only modify if using MySQL.
+    host: "localhost" #MySQL host address.
+    port: 3306 #MySQL port number.
+    database: "dungeons" #MySQL database name.
+    username: "root" #MySQL username.
+    password: "" #MySQL password.
+
 keys:
   normal:
     material: TRIPWIRE_HOOK

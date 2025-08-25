@@ -6,10 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
+import org.rexi.dungeons.database.DatabaseManager;
 import org.rexi.dungeons.listeners.ChestListener;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +20,7 @@ public final class Dungeons extends JavaPlugin {
 
     private GraveListener graveListener;
     private static Dungeons instance;
+    private DatabaseManager databaseManager;
 
     public final Map<UUID, String> playerClass = new HashMap<>();
 
@@ -25,6 +28,17 @@ public final class Dungeons extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+
+        // Database
+        databaseManager = new DatabaseManager(this);
+        try {
+            databaseManager.connect();
+        } catch (SQLException e) {
+            getLogger().severe("Could not connect to database: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        Bukkit.getPluginManager().registerEvents(databaseManager, this);
 
         // comandos
         DungeonCommand dungeonCommand = new DungeonCommand(this);
@@ -46,6 +60,9 @@ public final class Dungeons extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
         if (graveListener != null) {
             graveListener.clearAllGraves();
         }
@@ -60,9 +77,22 @@ public final class Dungeons extends JavaPlugin {
 
     public void setPlayerClass(Player player, String chosenClass) {
         playerClass.put(player.getUniqueId(), chosenClass);
+        try {
+            databaseManager.setPlayerClass(player.getUniqueId().toString(), chosenClass);
+        } catch (SQLException e) {
+            getLogger().severe("Failed to save player chat color on the database: " + e.getMessage());
+        }
     }
 
     public String getPlayerClass(Player player) {
         return playerClass.getOrDefault(player.getUniqueId(), "");
+    }
+    public void getPlayerClassFromDB(Player player) {
+        try {
+            String chosenClass = databaseManager.getPlayerClass(player.getUniqueId().toString());
+            playerClass.put(player.getUniqueId(), chosenClass);
+        } catch (SQLException e) {
+            getLogger().severe("Failed to load player class on the database: " + e.getMessage());
+        }
     }
 }
