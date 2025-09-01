@@ -1,23 +1,15 @@
 package org.rexi.dungeons.commands;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
-import org.bukkit.block.Chest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.rexi.dungeons.Dungeons;
 import org.rexi.dungeons.manager.GameManager;
-import org.rexi.dungeons.menu.ClassMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +19,9 @@ import java.util.List;
 public class DungeonCommand implements CommandExecutor, TabCompleter {
 
     private final Dungeons plugin;
-    private final NamespacedKey chestKey;
-    private final NamespacedKey keyItem;
 
     public DungeonCommand(Dungeons plugin) {
         this.plugin = plugin;
-        this.chestKey = new NamespacedKey(plugin, "dungeon_chest");
-        this.keyItem = new NamespacedKey(plugin, "dungeon_key");
     }
 
     @Override
@@ -45,8 +33,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(deserialize(
-                    plugin.getConfig().getString("messages.usage", "Uso: /dungeon <reload|givekey|spawnchests|menu|start|forcestart|join>")));
+            help(sender);
             return true;
         }
 
@@ -60,7 +47,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 plugin.reloadConfig();
                 GameManager.loadPossibleDungeons();
                 sender.sendMessage(deserialize(
-                        plugin.getConfig().getString("messages.reload", "&aConfiguración recargada")));
+                        plugin.getConfig().getString("messages.usage.reload", "&aConfiguración recargada")));
             }
             case "join" -> {
                 if (!sender.hasPermission("dungeon.command.join")) {
@@ -78,7 +65,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         String dungeon = args[1];
 
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
+                                plugin.getConfig().getString("messages.usage.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
                                         .replace("{player}", target.getName())
                                         .replace("{dungeon}", dungeon)));
                         GameManager.join(target, dungeon);
@@ -103,7 +90,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         Player target = Bukkit.getPlayerExact(args[2]);
 
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
+                                plugin.getConfig().getString("messages.usage.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
                                         .replace("{player}", target.getName())
                                         .replace("{dungeon}", dungeon)));
                         GameManager.join(target, dungeon);
@@ -126,7 +113,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         Player target = Bukkit.getPlayerExact(args[1]);
 
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.leave_forced", "&aForzando a &b{player} &aa salir de la dungeon")
+                                plugin.getConfig().getString("messages.usage.leave_forced", "&aForzando a &b{player} &aa salir de la dungeon")
                                         .replace("{player}", target.getName())));
                         GameManager.leave(target, true);
                         return true;
@@ -136,7 +123,6 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         GameManager.leave(player, true);
                         return true;
                     } else {
-                        String dungeon = args[1];
                         if (!player.hasPermission("dungeon.command.leave.others")) {
                             GameManager.leave(player, true);
                             return true;
@@ -151,6 +137,39 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
+            case "start" -> {
+                if (!sender.hasPermission("dungeon.command.start")) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                    return true;
+                }
+                if (args.length < 3) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon> <gamma/beta/alpha>")));
+                    return true;
+                } else {
+                    String dungeon = args[1];
+                    String type = args[2];
+
+                    if (!type.equalsIgnoreCase("gamma")
+                            && !type.equalsIgnoreCase("beta")
+                            && !type.equalsIgnoreCase("alpha")) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon> <gamma/beta/alpha>")));
+                        return true;
+                    }
+
+                    if (GameManager.dungeonStarted.getOrDefault(dungeon, false)
+                            || GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.start_already_started", "&cNo puedes iniciar esa dungeon porque ya está iniciada!")));
+                        return true;
+                    }
+
+                    GameManager.canStartDungeon.put(dungeon, true);
+                    GameManager.dungeonType.put(dungeon, type);
+                }
+            }
             case "endgame" -> {
                 if (!sender.hasPermission("dungeon.command.endgame")) {
                     sender.sendMessage(deserialize(
@@ -159,7 +178,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 }
                 if (args.length < 3) {
                     sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.endgame", "&c/dungeon endgame <dungeon> <gamma/beta/alpha>")));
+                            plugin.getConfig().getString("messages.usage.endgame", "&c/dungeon endgame <dungeon> <gamma/beta/alpha>")));
                     return true;
                 } else {
                     String dungeon = args[1];
@@ -211,6 +230,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("dungeon.command.join")) suggest.add("join");
             if (sender.hasPermission("dungeon.command.leave")) suggest.add("leave");
             if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
+            if (sender.hasPermission("dungeon.command.start")) suggest.add("start");
             return suggest;
         }
 
@@ -219,7 +239,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 2) {
             switch (sub) {
-                case "join", "endgame" -> {
+                case "join", "endgame", "start" -> {
                     // Autocompleta con los nombres de las dungeons posibles
                     return new ArrayList<>(GameManager.possibleDungeons);
                 }
@@ -238,7 +258,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
                 return players;
             }
-            if (sub.equals("endgame")) {
+            if (sub.equals("endgame") || sub.equals("start")) {
                 // Tipos posibles para endgame
                 return Arrays.asList("alpha", "beta", "gamma");
             }

@@ -359,51 +359,121 @@ dungeons:
       teleport: dungeon;708;158;299;0;0 # where to teleport players when started
       out_cords: dungeon;708;158;299;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     castillo:
       teleport: dungeon;-679;151;1097;0;0
       out_cords: dungeon;-679;151;1097;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     nieve:
       teleport: dungeon;-1981;67;-1188;0;0
       out_cords: dungeon;-1981;67;-1188;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     cerezo:
       teleport: dungeon;1247;72;-1210;0;0
       out_cords: dungeon;1247;72;-1210;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     desierto:
       teleport: dungeon;905;75;2162;0;0
       out_cords: dungeon;905;75;2162;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     derecha:
       teleport: dungeon;1666;63;1329;0;0
       out_cords: dungeon;1666;63;1329;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
     mar:
       teleport: dungeon;2346;148;508;0;0
       out_cords: dungeon;2346;148;508;0;0
       start_commands:
-        - "mm mobs spawn x cords"
+        gamma:
+          - "mm mobs spawn x cords"
+        beta:
+          - "mm mobs spawn x cords"
+        alpha:
+          - "mm mobs spawn x cords"
       stop_commands:
-        - "mm mobs killall x"
+        gamma:
+          - "mm mobs killall x"
+        beta:
+          - "mm mobs killall x"
+        alpha:
+          - "mm mobs killall x"
 
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
@@ -443,6 +513,8 @@ messages:
   bossbar_timer: "&eTiempo restante: &b{time}"
   rewards: "&aHas recibido las recompensas de esta dungeon"
   not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
+  dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada!"
+  start_already_started: "&cNo puedes iniciar esa dungeon porque ya está iniciada!"
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"
@@ -450,3 +522,4 @@ messages:
     leave: "&c/dungeon leave <dungeon>"
     leave_others: "&c/dungeon leave [jugador]"
     endgame: "/dungeon endgame <dungeon> <gamma/beta/alpha>"
+    start: "&c/dungeon start <dungeon> <gamma/beta/alpha>"

@@ -54,6 +54,9 @@ public class GameManager implements Listener {
 
     private static final Map<String, Integer> countdownTasks = new HashMap<>();
 
+    public static final Map<String, Boolean> canStartDungeon = new HashMap<>();
+    public static final Map<String, String> dungeonType = new HashMap<>();
+
     private static final int maxPlayers = getConfig().getInt("dungeons.players.max", 5);
     private static final int minPlayers = getConfig().getInt("dungeons.players.min", 1);
 
@@ -78,6 +81,12 @@ public class GameManager implements Listener {
         if (!getDungeonOfPlayer(player).isEmpty()) {
             player.sendMessage(deserialize(
                     getConfig().getString("messages.join_already", "&cYa estás en una dungeon. Usa &b/dungeon leave &cpara salir")));
+            return;
+        }
+
+        if (!canStartDungeon.getOrDefault(dungeon, false)) {
+            player.sendMessage(deserialize(getConfig()
+                    .getString("messages.dungeon_not_started", "&cNo puedes entrar a esta dungeon, no está iniciada!")));
             return;
         }
 
@@ -158,6 +167,13 @@ public class GameManager implements Listener {
     public static void start(String dungeon, boolean force) {
         if (dungeonStarting.getOrDefault(dungeon, false) && !force) return;
         if (dungeonStarted.getOrDefault(dungeon, false)) return;
+        String type = dungeonType.getOrDefault(dungeon, "");
+        if (type.isEmpty()) {
+            Bukkit.getConsoleSender().sendMessage(Component
+                    .text("Error al intentar iniciar la dungeon "+dungeon+" ya que no está iniciada correctamente")
+                    .color(NamedTextColor.RED));
+            return;
+        }
 
         int dungeonSize = dungeonPlayers.get(dungeon).size();
         if (!force && dungeonPlayers.containsKey(dungeon) && dungeonSize < minPlayers) {
@@ -186,12 +202,13 @@ public class GameManager implements Listener {
                 if (player != null) player.teleport(teleport);
             }
         }
-        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".start_commands");
+        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".start_commands."+type);
         for (String command : commands) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
         dungeonStarted.put(dungeon, true);
         dungeonStarting.put(dungeon, false);
+        canStartDungeon.put(dungeon, false);
 
         // cuenta atrás para comprobar si muere el boss o se acaba el tiempo
         startDungeonTimer(dungeon, 300);
@@ -284,11 +301,18 @@ public class GameManager implements Listener {
 
         if (!dungeonStarted.getOrDefault(dungeon, false)) return;
 
-        clearDungeon(dungeon);
-        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".stop_commands");
-        for (String command : commands) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        String type = dungeonType.getOrDefault(dungeon, "");
+        if (!type.isEmpty()) {
+            List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".stop_commands."+type);
+            for (String command : commands) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        } else {
+            Bukkit.getConsoleSender().sendMessage(Component
+                    .text("No se ha podido ver el tipo de la dungeon "+dungeon+" y no se han dado recompensas")
+                    .color(NamedTextColor.RED));
         }
+        clearDungeon(dungeon);
         dungeonStarted.put(dungeon, false);
 
         List<UUID> players = new ArrayList<>(getPlayersInDungeonList(dungeon));
