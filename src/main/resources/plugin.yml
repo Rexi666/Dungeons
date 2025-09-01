@@ -6,3 +6,4 @@ commands:
   dungeon:
     description: Comando principal de Dungeons
     aliases: [dg]
+depend: [WorldGuard]

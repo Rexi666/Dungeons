@@ -7,14 +7,19 @@ database:
     username: "root" #MySQL username.
     password: "" #MySQL password.
 
-keys:
-  normal:
-    material: TRIPWIRE_HOOK
-    name: "&5Key Normal"
-    lore:
-      - ""
-      - "&7Key normal"
-    rewards:
+rewards:
+  jungla:
+    gamma:
+      min: 1 # dejar -1 para que de todas las recompensas
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
       min: 1
       max: 3
       possibilities:
@@ -24,13 +29,193 @@ keys:
         - "give {player} diamond_pickaxe 1"
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
-  legendaria:
-    material: TRIPWIRE_HOOK
-    name: "&6Key Legendaria"
-    lore:
-      - ""
-      - "&7Key legendaria"
-    rewards:
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  castillo:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  nieve:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  cerezo:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  desierto:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  derecha:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} netherite_sword 1"
+        - "give {player} netherite_ingot 1"
+        - "give {player} netherite_axe 1"
+        - "give {player} netherite_pickaxe 1"
+        - "give {player} netherite_shovel 1"
+        - "give {player} netherite_chestplate 1"
+  mar:
+    gamma:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} iron_sword 1"
+        - "give {player} iron_ingot 1"
+        - "give {player} iron_axe 1"
+        - "give {player} iron_pickaxe 1"
+        - "give {player} iron_shovel 1"
+        - "give {player} iron_chestplate 1"
+    beta:
+      min: 1
+      max: 3
+      possibilities:
+        - "give {player} diamond_sword 1"
+        - "give {player} diamond 1"
+        - "give {player} diamond_axe 1"
+        - "give {player} diamond_pickaxe 1"
+        - "give {player} diamond_shovel 1"
+        - "give {player} diamond_chestplate 1"
+    alpha:
       min: 1
       max: 3
       possibilities:
@@ -171,56 +356,71 @@ dungeons:
     max: 5
   bosses:
     jungla:
-      cords: 708 158 299 dungeon
-      boss: x
+      teleport: dungeon;708;158;299;0;0 # where to teleport players when started
+      out_cords: dungeon;708;158;299;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     castillo:
-      cords: -679 151 1097 dungeon
-      boss: x
+      teleport: dungeon;-679;151;1097;0;0
+      out_cords: dungeon;-679;151;1097;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     nieve:
-      cords: -1981 67 -1188 dungeon
-      boss: x
+      teleport: dungeon;-1981;67;-1188;0;0
+      out_cords: dungeon;-1981;67;-1188;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     cerezo:
-      cords: 1247 72 -1210 dungeon
-      boss: x
+      teleport: dungeon;1247;72;-1210;0;0
+      out_cords: dungeon;1247;72;-1210;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     desierto:
-      cords: 905 75 2162 dungeon
-      boss: x
+      teleport: dungeon;905;75;2162;0;0
+      out_cords: dungeon;905;75;2162;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     derecha:
-      cords: 1666 63 1329 dungeon
-      boss: x
+      teleport: dungeon;1666;63;1329;0;0
+      out_cords: dungeon;1666;63;1329;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
     mar:
-      cords: 2346 148 508 dungeon
-      boss: x
+      teleport: dungeon;2346;148;508;0;0
+      out_cords: dungeon;2346;148;508;0;0
+      start_commands:
+        - "mm mobs spawn x cords"
+      stop_commands:
+        - "mm mobs killall x"
 
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
-  usage: "Uso: /dungeon <reload|givekey|spawnchests>"
   reload: "&aConfiguración recargada"
-  key: "&aHas dado una llave {key} a {player}"
-  wrong_key_type: "&cEsa llave no existe"
   wrong_player: "&cEse jugador no está conectado"
-  usage_key: "&cUso: /dungeon givekey <jugador> <key> [cantidad]"
-  usage_chest: "&cUso: /dungeon spawnchests <x> <y> <z> <world>"
   wrong_world: "&cEl mundo especificado no existe"
-  wrong_coords: "&cLas coordenadas deben ser números válidos"
-  chest_spawned: "&aSe ha spawneado un cofre en {x},{y},{z}. Mundo: {world}"
-  key_needed: "&cNecesitas una llave para abrir este cofre"
   no_rewards: "&cNo hay recompensas configuradas para esta llave"
-  chest_opened: "&a¡Has abierto un cofre con tu llave!"
   grave_created: "&6Se ha creado tu tumba. Tienes 5 minutos para recuperarla."
   no_grave: "&cAún no puedes abrir esta tumba. Solo el dueño puede hacerlo mientras tenga tiempo."
   grave_taken: "&aHas recogido los objetos de la tumba"
-  usage_menu: "&cUso: /dungeon menu [jugador]"
   menu_player: "&aAbierto el menú para &e{player}"
   class_chosen: "&aHas escogido la clase {class}"
   ninguna_clase: "&cNinguna"
   start_command: "&aHas iniciado la dungeon &b{dungeon}"
   start_already: "&cLa dungeon ya estaba iniciada"
-  usage_start: "&cUso: /dungeon start <dungeon>"
   forcestop_command: "&aHas forzado la parada de la dungeon &b{dungeon}"
   forcestop_already: "&cNo hay ninguna dungeon en progreso"
-  usage_forcestop: "&cUso: /dungeon forcestop <dungeon>"
-  usage_join: "&cUso: /dungeon join <dungeon> [jugador]"
   joined: "&aHas entrado en la dungeon &b{dungeon}"
   broadcast_join: "&7[&dDUNGEONS&7] &b{player} &eha entrado en la dungeon &b{dungeon} &7({current}/{max})"
   join_forced: "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}"
@@ -228,8 +428,25 @@ messages:
   join_max: "&cLa dungeon a la que intentaste entrar está llena"
   join_already: "&cYa estás en una dungeon. Usa &b/dungeon leave &cpara salir"
   join_started: "&cEsa dungeon ya está en una incursión activa"
-  usage_leave: "&cUso: /dungeon leave [jugador]"
   leave_forced: "&aForzando a &b{player} &aa salir de la dungeon"
   leaved: "&aHas salido de la dungeon &b{dungeon}"
   broadcast_leave: "&7[&dDUNGEONS&7] &b{player} &eha salido de la dungeon &b{dungeon} &7({current}/{max})"
   force_selectclass: "&cTienes que seleccionar una clase!"
+  cant_start: "&cSe necesitan {more} jugadores más para empezar esta dungeon"
+  start_timer: "&eLa dungeon &b{dungeon} &eempieza en &b{time} &esegundos"
+  start: "&eLa dungeon &b{dungeon} &eha comenzado!"
+  cant_enter: "&cNo puedes entrar aquí, hay una dungeon en curso!"
+  cant_leave: "&cNo puedes salir de aquí, estás en una dungeon activa!"
+  cant_damage: "&cNo puedes dañar entidades aquí"
+  time_over: "&c¡Se acabó el tiempo! Habéis perdido la dungeon."
+  time_over_title: "&cSe acabó el tiempo!"
+  bossbar_timer: "&eTiempo restante: &b{time}"
+  rewards: "&aHas recibido las recompensas de esta dungeon"
+  not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
+  usage:
+    reload: "&c/dungeon reload"
+    join: "&c/dungeon join <dungeon>"
+    join_others: "&c/dungeon join <dungeon> [jugador]"
+    leave: "&c/dungeon leave <dungeon>"
+    leave_others: "&c/dungeon leave [jugador]"
+    endgame: "/dungeon endgame <dungeon> <gamma/beta/alpha>"

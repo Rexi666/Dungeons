@@ -62,209 +62,6 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(deserialize(
                         plugin.getConfig().getString("messages.reload", "&aConfiguración recargada")));
             }
-            case "givekey" -> {
-                if (!sender.hasPermission("dungeon.command.givekey")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
-                if (args.length < 3) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage_key", "&cUso: /dungeon givekey <jugador> <key> [cantidad]")));
-                }
-
-                Player player = Bukkit.getPlayerExact(args[1]);
-                if (player == null) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.wrong_player", "&cEse jugador no está conectado")));
-                    return true;
-                }
-
-                String keyType = args[2];
-                if (!plugin.getConfig().isConfigurationSection("keys." + keyType)) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.wrong_key_type", "&cEsa llave no existe")));
-                    return true;
-                }
-
-                String matName = plugin.getConfig().getString("keys." + keyType + ".material", "TRIPWIRE_HOOK");
-                Material material = Material.matchMaterial(matName);
-                if (material == null) material = Material.TRIPWIRE_HOOK;
-
-                ItemStack key = new ItemStack(material);
-                ItemMeta meta = key.getItemMeta();
-
-                // Nombre
-                meta.displayName(deserialize(plugin.getConfig().getString("keys." + keyType + ".name", "&fLlave")));
-
-                // Lore
-                List<String> lore = plugin.getConfig().getStringList("keys." + keyType + ".lore");
-                List<Component> loreComp = new ArrayList<>();
-                for (String l : lore) {
-                    loreComp.add(deserialize(l));
-                }
-                meta.lore(loreComp);
-
-                // Marcar llave con PersistentData
-                meta.getPersistentDataContainer().set(keyItem, PersistentDataType.STRING, keyType);
-
-                key.setItemMeta(meta);
-
-                int cantidadFinal;
-                if (args.length != 4) {
-                    cantidadFinal = 1;
-                } else {
-                    try {
-                        cantidadFinal = Integer.parseInt(args[3]);
-                    } catch (Exception e) {
-                        cantidadFinal = 1;
-                    }
-                }
-                for (int i = 0; i < cantidadFinal; i++) {
-                    player.getInventory().addItem(key);
-                }
-
-                sender.sendMessage(deserialize(
-                        plugin.getConfig().getString("messages.key", "&aHas dado una llave {key} a {player}")
-                                .replace("{player}", args[1])
-                                .replace("{key}", keyType)));
-            }
-            case "spawnchests" -> {
-                if (!sender.hasPermission("dungeon.command.spawnchests")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
-                if (args.length < 5) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage_chest", "&cUso: /dungeon spawnchests <x> <y> <z> <world>")));
-                    return true;
-                }
-
-                try {
-                    double x = Double.parseDouble(args[1]);
-                    double y = Double.parseDouble(args[2]);
-                    double z = Double.parseDouble(args[3]);
-                    String worldName = args[4];
-
-                    World world = Bukkit.getWorld(worldName);
-                    if (world == null) {
-                        sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.wrong_world", "&cEl mundo especificado no existe")));
-                        return true;
-                    }
-
-                    // Coordenadas para los 4 cofres alrededor
-                    int[][] offsets = {
-                            {2, 0},   // x+2, z
-                            {-2, 0},  // x-2, z
-                            {0, 2},   // x, z+2
-                            {0, -2}   // x, z-2
-                    };
-
-                    for (int[] offset : offsets) {
-                        Location loc = new Location(world, x + offset[0], y, z + offset[1]);
-                        world.getBlockAt(loc).setType(org.bukkit.Material.CHEST);
-
-                        Chest chestBlock = (Chest) world.getBlockAt(loc).getState();
-                        chestBlock.getPersistentDataContainer().set(chestKey, PersistentDataType.BYTE, (byte) 1);
-                        chestBlock.update();
-                    }
-
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.chest_spawned", "&aSe han spawneado 4 cofres alrededor de {x},{y},{z} en el mundo {world}")
-                                    .replace("{x}", String.valueOf(x))
-                                    .replace("{y}", String.valueOf(y))
-                                    .replace("{z}", String.valueOf(z))
-                                    .replace("{world}", worldName)));
-
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.wrong_coords", "&cLas coordenadas deben ser números válidos")));
-                }
-            }
-            case "menu" -> {
-                if (!sender.hasPermission("dungeon.command.menu")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
-                if (!(sender instanceof Player player)) {
-                    if (args.length < 2) {
-                        sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.usage_menu", "&cUso: /dungeon menu [jugador]")));
-                        return true;
-                    } else {
-                        Player target = Bukkit.getPlayerExact(args[1]);
-                        ClassMenu.openMenu(target);
-                    }
-                } else {
-                    if (args.length == 1) {
-                        ClassMenu.openMenu(player);
-                        return true;
-                    } else {
-                        Player target = Bukkit.getPlayerExact(args[1]);
-                        ClassMenu.openMenu(target);
-                        return true;
-                    }
-                }
-            }
-            case "start" -> {
-                if (!sender.hasPermission("dungeon.command.start")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
-                if (args.length < 2) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage_start", "&cUso: /dungeon start <dungeon>")));
-                    return true;
-                } else {
-                    String dungeon = args[1];
-
-                    // Añadir lista de posibles dungeons
-
-                    if (GameManager.dungeonStarted.get(dungeon)) {
-                        sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.start_already", "&cLa dungeon ya estaba iniciada")));
-                        return true;
-                    }
-
-                    GameManager.start(dungeon);
-                    GameManager.dungeonStarted.put(dungeon, true);
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.start_command", "&aHas iniciado la dungeon &b{dungeon}")));
-                    return true;
-                }
-            }
-            case "forcestop" -> {
-                if (!sender.hasPermission("dungeon.command.forcestop")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
-                if (args.length < 2) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage_forcestop", "&cUso: /dungeon forcestop <dungeon>")));
-                    return true;
-                } else {
-                    String dungeon = args[1];
-
-                    // Añadir lista de posibles dungeons
-
-                    if (!GameManager.dungeonStarted.get(dungeon)) {
-                        sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.forcestop_already", "&cNo hay ninguna dungeon en progreso")));
-                        return true;
-                    }
-
-                    GameManager.forcestop(dungeon);
-                    GameManager.dungeonStarted.put(dungeon, false);
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.forcestop_command", "&aHas forzado la parada de la dungeon &b{dungeon}")));
-                    return true;
-                }
-            }
             case "join" -> {
                 if (!sender.hasPermission("dungeon.command.join")) {
                     sender.sendMessage(deserialize(
@@ -274,7 +71,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 if (!(sender instanceof Player player)) {
                     if (args.length < 3) {
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.usage_join", "&cUso: /dungeon join <dungeon> [jugador]")));
+                                plugin.getConfig().getString("messages.usage.join_others", "&cUso: /dungeon join <dungeon> [jugador]")));
                         return true;
                     } else {
                         Player target = Bukkit.getPlayerExact(args[2]);
@@ -290,7 +87,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 } else {
                     if (args.length < 2) {
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.usage_join", "&cUso: /dungeon join <dungeon> [jugador]")));
+                                plugin.getConfig().getString("messages.usage.join", "&cUso: /dungeon join <dungeon>")));
                         return true;
                     } else if (args.length == 2) {
                         String dungeon = args[1];
@@ -298,8 +95,12 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         GameManager.join(player, dungeon);
                         return true;
                     } else {
-                        Player target = Bukkit.getPlayerExact(args[2]);
                         String dungeon = args[1];
+                        if (!player.hasPermission("dungeon.command.join.others")) {
+                            GameManager.join(player, dungeon);
+                            return true;
+                        }
+                        Player target = Bukkit.getPlayerExact(args[2]);
 
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
@@ -319,7 +120,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 if (!(sender instanceof Player player)) {
                     if (args.length < 2) {
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.usage_leave", "&cUso: /dungeon leave [jugador]")));
+                                plugin.getConfig().getString("messages.usage.leave_others", "&cUso: /dungeon leave [jugador]")));
                         return true;
                     } else {
                         Player target = Bukkit.getPlayerExact(args[1]);
@@ -335,6 +136,11 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         GameManager.leave(player, true);
                         return true;
                     } else {
+                        String dungeon = args[1];
+                        if (!player.hasPermission("dungeon.command.leave.others")) {
+                            GameManager.leave(player, true);
+                            return true;
+                        }
                         Player target = Bukkit.getPlayerExact(args[1]);
 
                         sender.sendMessage(deserialize(
@@ -345,56 +151,96 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            default -> sender.sendMessage(deserialize(
-                    plugin.getConfig().getString("messages.usage", "Uso: /dungeon <reload|givekey|spawnchests>")));
+            case "endgame" -> {
+                if (!sender.hasPermission("dungeon.command.endgame")) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                    return true;
+                }
+                if (args.length < 3) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.endgame", "&c/dungeon endgame <dungeon> <gamma/beta/alpha>")));
+                    return true;
+                } else {
+                    String dungeon = args[1];
+                    String type = args[2];
+
+                    GameManager.giveReward(dungeon, type);
+                    GameManager.cancelDungeonTimer(dungeon);
+                    GameManager.stop(dungeon, true);
+                }
+            }
+            default -> help(sender);
         }
         return true;
+    }
+
+    private void help(CommandSender sender) {
+        if (sender.hasPermission("dungeon.command.reload")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.reload")));
+        if (sender.hasPermission("dungeon.command.endgame")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.endgame")));
+        if (sender.hasPermission("dungeon.command.join")) {
+            if (sender.hasPermission("dungeon.command.join.others")) {
+                sender.sendMessage(deserialize(plugin.getConfig()
+                        .getString("messages.usage.join_others")));
+            } else {
+                sender.sendMessage(deserialize(plugin.getConfig()
+                        .getString("messages.usage.join")));
+            }
+        }
+        if (sender.hasPermission("dungeon.command.leave")) {
+            if (sender.hasPermission("dungeon.command.leave.others")) {
+                sender.sendMessage(deserialize(plugin.getConfig()
+                        .getString("messages.usage.leave_others")));
+            } else {
+                sender.sendMessage(deserialize(plugin.getConfig()
+                        .getString("messages.usage.leave")));
+            }
+        }
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!sender.hasPermission("dungeon.command")) return Collections.emptyList();
 
+        // Primer argumento: subcomando
         if (args.length == 1) {
-            return Arrays.asList("reload", "givekey", "spawnchests", "menu", "start", "forcestop", "join", "leave");
+            List<String> suggest = new ArrayList<>();
+            if (sender.hasPermission("dungeon.command.reload")) suggest.add("reload");
+            if (sender.hasPermission("dungeon.command.join")) suggest.add("join");
+            if (sender.hasPermission("dungeon.command.leave")) suggest.add("leave");
+            if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
+            return suggest;
         }
 
-        // Añadir autocompletado para start, forcestart, join y leave
+        // Segundo argumento: dependiendo del subcomando
+        String sub = args[0].toLowerCase();
 
-        if (args[0].equalsIgnoreCase("givekey")) {
-            if (args.length == 2) {
-                // autocompletar jugadores online
-                List<String> players = new ArrayList<>();
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    players.add(p.getName());
+        if (args.length == 2) {
+            switch (sub) {
+                case "join", "endgame" -> {
+                    // Autocompleta con los nombres de las dungeons posibles
+                    return new ArrayList<>(GameManager.possibleDungeons);
                 }
-                return players;
-            } else if (args.length == 3) {
-                if (plugin.getConfig().isConfigurationSection("keys")) {
-                    return new ArrayList<>(plugin.getConfig().getConfigurationSection("keys").getKeys(false));
+                case "leave" -> {
+                    List<String> players = new ArrayList<>();
+                    for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
+                    return players;
                 }
             }
         }
 
-        if (args[0].equalsIgnoreCase("menu")) {
-            if (args.length == 2) {
-                // autocompletar jugadores online
+        // Tercer argumento: jugadores (para join y leave)
+        if (args.length == 3) {
+            if (sub.equals("join") || sub.equals("leave")) {
                 List<String> players = new ArrayList<>();
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    players.add(p.getName());
-                }
+                for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
                 return players;
             }
-        }
-
-        if (args[0].equalsIgnoreCase("spawnchests")) {
-            if (args.length == 5) {
-                // mundos disponibles
-                List<String> worlds = new ArrayList<>();
-                for (World w : Bukkit.getWorlds()) {
-                    worlds.add(w.getName());
-                }
-                return worlds;
+            if (sub.equals("endgame")) {
+                // Tipos posibles para endgame
+                return Arrays.asList("alpha", "beta", "gamma");
             }
         }
 

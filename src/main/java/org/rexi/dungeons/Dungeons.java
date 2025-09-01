@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
 import org.rexi.dungeons.database.DatabaseManager;
-import org.rexi.dungeons.listeners.ChestListener;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
+import org.rexi.dungeons.manager.ClassManager;
 import org.rexi.dungeons.manager.GameManager;
 
 import java.sql.SQLException;
@@ -49,7 +49,6 @@ public final class Dungeons extends JavaPlugin {
         this.getCommand("dungeon").setTabCompleter(dungeonCommand);
 
         // listeners
-        getServer().getPluginManager().registerEvents(new ChestListener(this), this);
 
         graveListener = new GraveListener(this);
         Bukkit.getPluginManager().registerEvents(graveListener, this);
@@ -60,6 +59,7 @@ public final class Dungeons extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new GameManager(), this);
         GameManager.loadPossibleDungeons();
+        Bukkit.getPluginManager().registerEvents(new ClassManager(), this);
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha activado correctamente").color(NamedTextColor.GREEN));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
