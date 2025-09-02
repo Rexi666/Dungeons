@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -42,7 +43,7 @@ public class GameManager implements Listener {
         return Dungeons.getInstance().getConfig();
     }
 
-    public static final Map<String, Boolean> dungeonStarted = new HashMap<>();
+    public static final List<String> dungeonStarted = new ArrayList<>();
 
     public static final Map<String, List<UUID>> dungeonPlayers = new HashMap<>();
 
@@ -72,7 +73,7 @@ public class GameManager implements Listener {
             return;
         }
 
-        if (dungeonStarted.getOrDefault(dungeon, false)) {
+        if (dungeonStarted.contains(dungeon)) {
             player.sendMessage(deserialize(
                     getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
             return;
@@ -162,11 +163,13 @@ public class GameManager implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         leave(player, false);
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+        player.setHealth(20.0);
     }
 
     public static void start(String dungeon, boolean force) {
         if (dungeonStarting.getOrDefault(dungeon, false) && !force) return;
-        if (dungeonStarted.getOrDefault(dungeon, false)) return;
+        if (dungeonStarted.contains(dungeon)) return;
         String type = dungeonType.getOrDefault(dungeon, "");
         if (type.isEmpty()) {
             Bukkit.getConsoleSender().sendMessage(Component
@@ -206,9 +209,11 @@ public class GameManager implements Listener {
         for (String command : commands) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
-        dungeonStarted.put(dungeon, true);
+        dungeonStarted.add(dungeon);
         dungeonStarting.put(dungeon, false);
         canStartDungeon.put(dungeon, false);
+
+        ClassManager.TankHealth(dungeon);
 
         // cuenta atrás para comprobar si muere el boss o se acaba el tiempo
         startDungeonTimer(dungeon, 300);
@@ -236,7 +241,7 @@ public class GameManager implements Listener {
 
             @Override
             public void run() {
-                if (!dungeonStarted.getOrDefault(dungeon, false)) {
+                if (!dungeonStarted.contains(dungeon)) {
                     cancelDungeonTimer(dungeon);
                     return;
                 }
@@ -299,7 +304,7 @@ public class GameManager implements Listener {
             }
         }
 
-        if (!dungeonStarted.getOrDefault(dungeon, false)) return;
+        if (!dungeonStarted.contains(dungeon)) return;
 
         String type = dungeonType.getOrDefault(dungeon, "");
         if (!type.isEmpty()) {
@@ -313,19 +318,21 @@ public class GameManager implements Listener {
                     .color(NamedTextColor.RED));
         }
         clearDungeon(dungeon);
-        dungeonStarted.put(dungeon, false);
+        dungeonStarted.remove(dungeon);
 
         List<UUID> players = new ArrayList<>(getPlayersInDungeonList(dungeon));
         for (UUID uuid : players) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 removePlayerFromDungeonList(dungeon, player);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+                player.setHealth(20.0);
             }
         }
     }
 
     public static void giveReward(String dungeon, String type) {
-        if (!dungeonStarted.getOrDefault(dungeon, false)) {
+        if (!dungeonStarted.contains(dungeon)) {
             Bukkit.getConsoleSender().sendMessage(Component
                     .text("Se ha intentado dar la recompensa a la dungeon " + dungeon + " pero no estaba iniciada")
                     .color(NamedTextColor.RED));
@@ -429,12 +436,21 @@ public class GameManager implements Listener {
         if (fromRegion != null && fromRegion.equalsIgnoreCase(toRegion)) return;
 
         if (entity instanceof Player player) {
-            if (dungeonStarted.getOrDefault(toRegion, false)
-                    && !getDungeonOfPlayer(player).equalsIgnoreCase(toRegion)) {
-                player.sendMessage(deserialize(getConfig()
-                        .getString("messages.cant_enter", "&cNo puedes entrar aquí, hay una dungeon en curso!")));
-                event.setCancelled(true);
-            } else if (dungeonStarted.getOrDefault(fromRegion, false)
+            if (dungeonStarted.contains(toRegion)) {
+                if (!getDungeonOfPlayer(player).equalsIgnoreCase(toRegion)) {
+                    player.sendMessage(deserialize(getConfig()
+                            .getString("messages.cant_enter", "&cNo puedes entrar aquí, hay una dungeon en curso!")));
+                    event.setCancelled(true);
+                } else {
+                    if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
+                        if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
+                            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
+                            player.setHealth(40.0); // para curarlo al máximo
+
+                        }
+                    }
+                }
+            } else if (dungeonStarted.contains(fromRegion)
                     && getDungeonOfPlayer(player).equalsIgnoreCase(fromRegion)) {
                 player.sendMessage(deserialize(getConfig()
                         .getString("messages.cant_leave", "&cNo puedes salir de aquí, estás en una dungeon activa!")));
@@ -475,7 +491,7 @@ public class GameManager implements Listener {
         if (regionId == null) return;
 
         if (possibleDungeons.contains(regionId)
-                && dungeonStarted.getOrDefault(regionId, false)
+                && dungeonStarted.contains(regionId)
                 && !getDungeonOfPlayer(player).equalsIgnoreCase(regionId)) {
             player.sendMessage(deserialize(getConfig()
                     .getString("messages.cant_damage", "&cNo puedes dañar entidades aquí")));
@@ -615,7 +631,7 @@ public class GameManager implements Listener {
         }
     }
 
-    private static Component deserialize(String input) {
+    public static Component deserialize(String input) {
         if (input.contains("<") && input.contains(">")) {
             try {
                 return MiniMessage.miniMessage().deserialize(input);

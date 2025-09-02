@@ -25,8 +25,6 @@ public final class Dungeons extends JavaPlugin {
 
     public final Map<UUID, String> playerClass = new HashMap<>();
 
-    // poner todos los dungeons en false
-
     @Override
     public void onEnable() {
         instance = this;
@@ -59,7 +57,9 @@ public final class Dungeons extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new GameManager(), this);
         GameManager.loadPossibleDungeons();
+
         Bukkit.getPluginManager().registerEvents(new ClassManager(), this);
+        Bukkit.getScheduler().runTaskTimer(this, () -> { ClassManager.Repetitive(); }, 0L, 60L);
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha activado correctamente").color(NamedTextColor.GREEN));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));

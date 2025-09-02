@@ -1,5 +1,6 @@
 package org.rexi.dungeons.database;
 
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -86,5 +87,6 @@ public class DatabaseManager implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Dungeons.getInstance().getPlayerClassFromDB(player);
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
     }
 }

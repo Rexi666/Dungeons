@@ -33,7 +33,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            help(sender);
+            helpMessage(sender);
             return true;
         }
 
@@ -47,7 +47,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 plugin.reloadConfig();
                 GameManager.loadPossibleDungeons();
                 sender.sendMessage(deserialize(
-                        plugin.getConfig().getString("messages.usage.reload", "&aConfiguración recargada")));
+                        plugin.getConfig().getString("messages.reload", "&aConfiguración recargada")));
             }
             case "join" -> {
                 if (!sender.hasPermission("dungeon.command.join")) {
@@ -159,7 +159,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if (GameManager.dungeonStarted.getOrDefault(dungeon, false)
+                    if (GameManager.dungeonStarted.contains(dungeon)
                             || GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.start_already_started", "&cNo puedes iniciar esa dungeon porque ya está iniciada!")));
@@ -189,12 +189,12 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     GameManager.stop(dungeon, true);
                 }
             }
-            default -> help(sender);
+            default -> helpMessage(sender);
         }
         return true;
     }
 
-    private void help(CommandSender sender) {
+    private void helpMessage(CommandSender sender) {
         if (sender.hasPermission("dungeon.command.reload")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.reload")));
         if (sender.hasPermission("dungeon.command.endgame")) sender.sendMessage(deserialize(plugin.getConfig()
