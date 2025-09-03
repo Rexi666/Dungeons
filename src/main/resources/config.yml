@@ -558,7 +558,7 @@ messages:
   bossbar_timer: "&eTiempo restante: &b{time}"
   rewards: "&aHas recibido las recompensas de esta dungeon"
   not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
-  dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada!"
+  dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada! Puedes iniciarla con &b/dungeon start"
   cooldown: "&cEsa habilidad está en cooldown! {cooldown}"
   ability: "&aHas usado la habilidad: {ability}"
   no_console: "&cEste comando sólo puede ser usado por jugadores"

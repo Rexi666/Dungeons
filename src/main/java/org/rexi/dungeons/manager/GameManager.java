@@ -87,7 +87,7 @@ public class GameManager implements Listener {
 
         if (!canStartDungeon.getOrDefault(dungeon, false)) {
             player.sendMessage(deserialize(getConfig()
-                    .getString("messages.dungeon_not_started", "&cNo puedes entrar a esta dungeon, no está iniciada!")));
+                    .getString("messages.dungeon_not_started", "&cNo puedes entrar a esta dungeon, no está iniciada! Puedes iniciarla con &b/dungeon start")));
             return;
         }
 
