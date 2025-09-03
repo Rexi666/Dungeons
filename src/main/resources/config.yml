@@ -7,6 +7,10 @@ database:
     username: "root" #MySQL username.
     password: "" #MySQL password.
 
+times: # seconds
+  pre_game: 25
+  game: 300
+
 rewards:
   jungla:
     gamma:
@@ -295,6 +299,46 @@ menu:
         - "&7- Castillo de piedra"
         - "&7- Sismo"
 
+start_menu:
+  title: "&7Iniciar una dungeon"
+  items:
+    gamma:
+      material: REDSTONE
+      name: "&cGamma"
+      prize: 10000
+      slot: 20
+      lore:
+        - ""
+        - "&7Iniciar esta dungeon"
+        - "&7en dificultad Gamma"
+        - "&8Precio: ${prize}"
+        - ""
+        - "&eClick para iniciar"
+    beta:
+      material: LAPIS_LAZULI
+      name: "&2Beta"
+      prize: 20000
+      slot: 22
+      lore:
+        - ""
+        - "&7Iniciar esta dungeon"
+        - "&7en dificultad Beta"
+        - "&8Precio: ${prize}"
+        - ""
+        - "&eClick para iniciar"
+    alpha:
+      material: NETHERITE_INGOT
+      name: "&6Alpha"
+      prize: 30000
+      slot: 24
+      lore:
+        - ""
+        - "&7Iniciar esta dungeon"
+        - "&7en dificultad Alpha"
+        - "&8Precio: ${prize}"
+        - ""
+        - "&eClick para iniciar"
+
 classes: # Cooldown en segundos
   world: "dungeon"
   healer:
@@ -499,6 +543,7 @@ messages:
   join_already: "&cYa estás en una dungeon. Usa &b/dungeon leave &cpara salir"
   join_started: "&cEsa dungeon ya está en una incursión activa"
   leave_forced: "&aForzando a &b{player} &aa salir de la dungeon"
+  leave_cant: "&cNo puedes salir de una dungeon que ya ha iniciado!"
   leaved: "&aHas salido de la dungeon &b{dungeon}"
   broadcast_leave: "&7[&dDUNGEONS&7] &b{player} &eha salido de la dungeon &b{dungeon} &7({current}/{max})"
   force_selectclass: "&cTienes que seleccionar una clase!"
@@ -514,9 +559,11 @@ messages:
   rewards: "&aHas recibido las recompensas de esta dungeon"
   not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
   dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada!"
-  start_already_started: "&cNo puedes iniciar esa dungeon porque ya está iniciada!"
   cooldown: "&cEsa habilidad está en cooldown! {cooldown}"
   ability: "&aHas usado la habilidad: {ability}"
+  no_console: "&cEste comando sólo puede ser usado por jugadores"
+  no_money: "&cNo tienes dinero suficiente para comprar esto"
+  starting_dungeon: "&7[&dDUNGEONS&7] &b{player} &eestá iniciando la dungeon &b{dungeon} &een dificultad &b{type}"
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"
@@ -524,4 +571,4 @@ messages:
     leave: "&c/dungeon leave <dungeon>"
     leave_others: "&c/dungeon leave [jugador]"
     endgame: "&c/dungeon endgame <dungeon> <gamma/beta/alpha>"
-    start: "&c/dungeon start <dungeon> <gamma/beta/alpha>"
+    start: "&c/dungeon start <dungeon>"

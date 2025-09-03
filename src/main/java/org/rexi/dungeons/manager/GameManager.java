@@ -142,6 +142,11 @@ public class GameManager implements Listener {
     public static void leave(Player player, boolean message) {
         String dungeon = getDungeonOfPlayer(player);
         if (!dungeon.isEmpty()) {
+            if (dungeonStarted.contains(dungeon)) {
+                player.sendMessage(deserialize(getConfig()
+                        .getString("leave_cant","&cNo puedes salir de una dungeon que ya ha iniciado!")));
+                return;
+            }
             stop(dungeon, false);
             removePlayerFromDungeonList(dungeon, player);
             Bukkit.broadcast(deserialize(getConfig()
@@ -163,8 +168,6 @@ public class GameManager implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         leave(player, false);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-        player.setHealth(20.0);
     }
 
     public static void start(String dungeon, boolean force) {
@@ -191,7 +194,7 @@ public class GameManager implements Listener {
         }
 
         if (!force) {
-            startCountdown(dungeon, 25);
+            startCountdown(dungeon, getConfig().getInt("times.pre_game", 25));
             dungeonStarting.put(dungeon, true);
             return;
         }
@@ -216,7 +219,7 @@ public class GameManager implements Listener {
         ClassManager.TankHealth(dungeon);
 
         // cuenta atrás para comprobar si muere el boss o se acaba el tiempo
-        startDungeonTimer(dungeon, 300);
+        startDungeonTimer(dungeon, getConfig().getInt("times.game", 300));
     }
 
     private static final Map<String, Integer> dungeonTimers = new HashMap<>();

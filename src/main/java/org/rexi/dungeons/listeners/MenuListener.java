@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +14,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.rexi.dungeons.Dungeons;
+import org.rexi.dungeons.manager.GameManager;
+
+import static org.rexi.dungeons.manager.GameManager.getDungeonOfPlayer;
 
 public class MenuListener implements Listener {
 
@@ -46,29 +51,92 @@ public class MenuListener implements Listener {
         String title = PLAIN.serialize(event.getView().title());
         String menuTitle = PLAIN.serialize(deserialize(
                 config.getString("menu.title", "&fElige tu clase")));
+        String startTitle = PLAIN.serialize(deserialize(
+                config.getString("start_menu.title", "&7Iniciar una dungeon")));
 
         final int rawSlot = event.getRawSlot();
         if (rawSlot < 0 || rawSlot >= event.getView().getTopInventory().getSize()) return;
 
-        if (!title.equalsIgnoreCase(menuTitle)) return;
+        if (title.equalsIgnoreCase(menuTitle)) {
+            ItemStack clicked = event.getCurrentItem();
+            String info = clicked.getItemMeta().getPersistentDataContainer().get(
+                    new NamespacedKey(Dungeons.getInstance(), "dungeons-class"),
+                    PersistentDataType.STRING
+            );
 
-        ItemStack clicked = event.getCurrentItem();
-        String info = clicked.getItemMeta().getPersistentDataContainer().get(
-                new NamespacedKey(Dungeons.getInstance(), "dungeons-class"),
-                PersistentDataType.STRING
-        );
+            if (info != null && !info.isEmpty()) {
+                Dungeons.getInstance().setPlayerClass(player, info);
 
-        if (info != null && !info.isEmpty()) {
-            Dungeons.getInstance().setPlayerClass(player, info);
+                String name = config.getString("menu.classes."+info+".name",
+                        config.getString("messages.ninguna_clase", "&cNinguna"));
+                player.sendMessage(deserialize(
+                        config.getString("messages.class_chosen", "&aHas escogido la clase {class}")
+                                .replace("{class}", name)));
+            }
 
-            String name = config.getString("menu.classes."+info+".name",
-                    config.getString("messages.ninguna_clase", "&cNinguna"));
-            player.sendMessage(deserialize(
-                    config.getString("messages.class_chosen", "&aHas escogido la clase {class}")
-                            .replace("{class}", name)));
+            event.setCancelled(true);
+            player.closeInventory();
+        } else if (title.equalsIgnoreCase(startTitle)) {
+            ItemStack clicked = event.getCurrentItem();
+
+            String type = clicked.getItemMeta().getPersistentDataContainer().get(
+                    new NamespacedKey(Dungeons.getInstance(), "dungeons-type"),
+                    PersistentDataType.STRING
+            );
+            String dungeon = clicked.getItemMeta().getPersistentDataContainer().get(
+                    new NamespacedKey(Dungeons.getInstance(), "dungeons-dungeon"),
+                    PersistentDataType.STRING
+            );
+
+            event.setCancelled(true);
+            player.closeInventory();
+
+            if ((type != null && !type.isEmpty()) && (dungeon != null && !dungeon.isEmpty())) {
+                if (!GameManager.possibleDungeons.contains(dungeon)) {
+                    player.sendMessage(deserialize(config
+                            .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
+                            .replace("{dungeon}", dungeon)));
+                    return;
+                }
+
+                if (GameManager.dungeonStarted.contains(dungeon)
+                        || GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
+                    player.sendMessage(deserialize(
+                            config.getString("messages.start_already", "&cLa dungeon ya estaba iniciada")));
+                    return;
+                }
+
+                String dungeonOfPlayer = getDungeonOfPlayer(player);
+                if (!dungeonOfPlayer.isEmpty()) {
+                    player.sendMessage(deserialize(config
+                            .getString("messages.join_already", "&cYa estás en una dungeon. Usa &b/dungeon leave &cpara salir")));
+                    return;
+                }
+
+                int prize = config.getInt("start_menu.items."+type+".prize", 1);
+                double money = Dungeons.getEconomy().getBalance(player);
+                if (money < prize) {
+                    player.sendMessage(deserialize(config
+                            .getString("no_money", "&cNo tienes dinero suficiente para comprar esto")));
+                    return;
+                }
+
+                EconomyResponse r = Dungeons.getEconomy().withdrawPlayer(player, prize);
+                if(!r.transactionSuccess()) {
+                    player.sendMessage(String.format("Ocurrió un error: %s", r.errorMessage));
+                    return;
+                }
+
+                Bukkit.broadcast(deserialize(config
+                        .getString("starting_dungeon", "&7[&dDUNGEONS&7] &b{player} &eestá iniciando la dungeon &b{dungeon} &een dificultad &b{type}")
+                        .replace("{player}", player.getName())
+                        .replace("{dungeon}", dungeon)
+                        .replace("{type}", type)));
+
+                GameManager.canStartDungeon.put(dungeon, true);
+                GameManager.dungeonType.put(dungeon, type);
+                GameManager.join(player, dungeon);
+            }
         }
-
-        event.setCancelled(true);
-        player.closeInventory();
     }
 }

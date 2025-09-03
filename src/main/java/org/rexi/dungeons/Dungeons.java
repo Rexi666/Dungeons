@@ -2,8 +2,10 @@ package org.rexi.dungeons;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
 import org.rexi.dungeons.database.DatabaseManager;
@@ -23,12 +25,20 @@ public final class Dungeons extends JavaPlugin {
     private static Dungeons instance;
     private DatabaseManager databaseManager;
 
+    private static Economy econ = null;
+
     public final Map<UUID, String> playerClass = new HashMap<>();
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+
+        if (!setupEconomy() ) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Database
         databaseManager = new DatabaseManager(this);
@@ -64,6 +74,18 @@ public final class Dungeons extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha activado correctamente").color(NamedTextColor.GREEN));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
 
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 
     @Override
@@ -102,5 +124,9 @@ public final class Dungeons extends JavaPlugin {
         } catch (SQLException e) {
             getLogger().severe("Failed to load player class on the database: " + e.getMessage());
         }
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 }

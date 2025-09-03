@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.rexi.dungeons.Dungeons;
 import org.rexi.dungeons.manager.GameManager;
+import org.rexi.dungeons.menu.StartMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,31 +144,33 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
                     return true;
                 }
-                if (args.length < 3) {
+                if (args.length < 2) {
                     sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon> <gamma/beta/alpha>")));
+                            plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon>")));
                     return true;
                 } else {
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(deserialize(plugin.getConfig()
+                                .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
+                        return true;
+                    }
                     String dungeon = args[1];
-                    String type = args[2];
 
-                    if (!type.equalsIgnoreCase("gamma")
-                            && !type.equalsIgnoreCase("beta")
-                            && !type.equalsIgnoreCase("alpha")) {
-                        sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon> <gamma/beta/alpha>")));
+                    if (!GameManager.possibleDungeons.contains(dungeon)) {
+                        sender.sendMessage(deserialize(plugin.getConfig()
+                                .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
+                                .replace("{dungeon}", dungeon)));
                         return true;
                     }
 
                     if (GameManager.dungeonStarted.contains(dungeon)
                             || GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
                         sender.sendMessage(deserialize(
-                                plugin.getConfig().getString("messages.start_already_started", "&cNo puedes iniciar esa dungeon porque ya está iniciada!")));
+                                plugin.getConfig().getString("messages.start_already", "&cLa dungeon ya estaba iniciada")));
                         return true;
                     }
 
-                    GameManager.canStartDungeon.put(dungeon, true);
-                    GameManager.dungeonType.put(dungeon, type);
+                    StartMenu.openMenu(player, dungeon);
                 }
             }
             case "endgame" -> {
