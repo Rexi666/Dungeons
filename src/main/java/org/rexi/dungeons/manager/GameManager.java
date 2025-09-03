@@ -29,7 +29,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.rexi.dungeons.Dungeons;
 import org.rexi.dungeons.menu.ClassMenu;
@@ -438,31 +440,60 @@ public class GameManager implements Listener {
         String fromRegion = getRegionName(from);
         String toRegion = getRegionName(to);
 
-        if (fromRegion != null && fromRegion.equalsIgnoreCase(toRegion)) return;
+        if (fromRegion == null) fromRegion = "__global__";
+        if (toRegion == null) toRegion = "__global__";
 
-        if (entity instanceof Player player) {
-            if (dungeonStarted.contains(toRegion)) {
-                if (!getDungeonOfPlayer(player).equalsIgnoreCase(toRegion)) {
-                    player.sendMessage(deserialize(getConfig()
-                            .getString("messages.cant_enter", "&cNo puedes entrar aquí, hay una dungeon en curso!")));
-                    event.setCancelled(true);
-                } else {
-                    if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
-                        if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
-                            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
-                            player.setHealth(40.0); // para curarlo al máximo
+        if (fromRegion.equalsIgnoreCase(toRegion)) return;
 
-                        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+
+        if (!world.getName().equalsIgnoreCase(getConfig().getString("classes.world", "dungeon"))) return;
+
+        Location from = event.getFrom();
+        Location to = event.getTo();
+
+        // Si el bloque de destino es el mismo, ignoramos (para optimización)
+        if (from.getBlockX() == to.getBlockX() &&
+                from.getBlockY() == to.getBlockY() &&
+                from.getBlockZ() == to.getBlockZ()) {
+            return;
+        }
+
+        String fromRegion = getRegionName(from);
+        String toRegion = getRegionName(to);
+
+        if (fromRegion == null) fromRegion = "__global__";
+        if (toRegion == null) toRegion = "__global__";
+
+        if (fromRegion.equalsIgnoreCase(toRegion)) return;
+
+        if (dungeonStarted.contains(toRegion)) {
+            if (!getDungeonOfPlayer(player).equalsIgnoreCase(toRegion)) {
+                player.sendMessage(deserialize(getConfig()
+                        .getString("messages.cant_enter", "&cNo puedes entrar aquí, hay una dungeon en curso!")));
+                //event.setCancelled(true);
+                player.teleport(from);
+            } else {
+                if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
+                    if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
+                        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
+                        player.setHealth(40.0); // para curarlo al máximo
+
                     }
                 }
-            } else if (dungeonStarted.contains(fromRegion)
-                    && getDungeonOfPlayer(player).equalsIgnoreCase(fromRegion)) {
-                player.sendMessage(deserialize(getConfig()
-                        .getString("messages.cant_leave", "&cNo puedes salir de aquí, estás en una dungeon activa!")));
-                event.setCancelled(true);
             }
-        } else {
-            event.setCancelled(true);
+        } else if (dungeonStarted.contains(fromRegion)
+                && getDungeonOfPlayer(player).equalsIgnoreCase(fromRegion)) {
+            player.sendMessage(deserialize(getConfig()
+                    .getString("messages.cant_leave", "&cNo puedes salir de aquí, estás en una dungeon activa!")));
+            //event.setCancelled(true);
+            player.teleport(from);
         }
     }
 
@@ -502,6 +533,11 @@ public class GameManager implements Listener {
                     .getString("messages.cant_damage", "&cNo puedes dañar entidades aquí")));
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
     }
 
     //--------------------------------
