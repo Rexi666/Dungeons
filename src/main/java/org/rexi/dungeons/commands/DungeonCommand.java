@@ -201,6 +201,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 .getString("messages.usage.reload")));
         if (sender.hasPermission("dungeon.command.endgame")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.endgame")));
+        if (sender.hasPermission("dungeon.command.start")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.start")));
         if (sender.hasPermission("dungeon.command.join")) {
             if (sender.hasPermission("dungeon.command.join.others")) {
                 sender.sendMessage(deserialize(plugin.getConfig()
