@@ -44,7 +44,7 @@ public class StartMenu {
                 boolean glow = getConfig().getBoolean(path + ".glow", false);
                 int slot = getConfig().getInt(path + ".slot", 0);
                 int amount = getConfig().getInt(path + ".amount", 1);
-                int prize = getConfig().getInt(path + ".prize", 1);
+                int prize = getConfig().getInt("dungeons.bosses."+dungeon+"."+key+".prize", 1);
 
                 // Lore con placeholders extra
                 List<String> lore = getConfig().getStringList(path + ".lore");
@@ -68,6 +68,11 @@ public class StartMenu {
                             new NamespacedKey(Dungeons.getInstance(), "dungeons-dungeon"),
                             PersistentDataType.STRING,
                             dungeon
+                    );
+                    meta.getPersistentDataContainer().set(
+                            new NamespacedKey(Dungeons.getInstance(), "dungeons-prize"),
+                            PersistentDataType.STRING,
+                            String.valueOf(prize)
                     );
                     item.setItemMeta(meta);
                 }

@@ -210,7 +210,7 @@ public class GameManager implements Listener {
                 if (player != null) player.teleport(teleport);
             }
         }
-        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".start_commands."+type);
+        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+"."+type+".start_commands");
         for (String command : commands) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
@@ -313,7 +313,7 @@ public class GameManager implements Listener {
 
         String type = dungeonType.getOrDefault(dungeon, "");
         if (!type.isEmpty()) {
-            List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+".stop_commands."+type);
+            List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+"."+type+".stop_commands");
             for (String command : commands) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }

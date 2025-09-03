@@ -167,7 +167,7 @@ rewards:
         - "give {player} netherite_pickaxe 1"
         - "give {player} netherite_shovel 1"
         - "give {player} netherite_chestplate 1"
-  derecha:
+  templo:
     gamma:
       min: 1
       max: 3
@@ -402,122 +402,150 @@ dungeons:
     jungla:
       teleport: dungeon;708;158;299;0;0 # where to teleport players when started
       out_cords: dungeon;708;158;299;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
     castillo:
       teleport: dungeon;-679;151;1097;0;0
       out_cords: dungeon;-679;151;1097;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
     nieve:
       teleport: dungeon;-1981;67;-1188;0;0
       out_cords: dungeon;-1981;67;-1188;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
     cerezo:
       teleport: dungeon;1247;72;-1210;0;0
       out_cords: dungeon;1247;72;-1210;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
     desierto:
       teleport: dungeon;905;75;2162;0;0
       out_cords: dungeon;905;75;2162;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
-    derecha:
+        stop_commands:
+          - "mm mobs kill x"
+    templo:
       teleport: dungeon;1666;63;1329;0;0
       out_cords: dungeon;1666;63;1329;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
     mar:
       teleport: dungeon;2346;148;508;0;0
       out_cords: dungeon;2346;148;508;0;0
-      start_commands:
-        gamma:
+      gamma:
+        prize: 10000
+        start_command:
           - "mm mobs spawn x cords"
-        beta:
+        stop_commands:
+          - "mm mobs kill x"
+      beta:
+        prize: 20000
+        start_command:
           - "mm mobs spawn x cords"
-        alpha:
+        stop_commands:
+          - "mm mobs kill x"
+      alpha:
+        prize: 30000
+        start_command:
           - "mm mobs spawn x cords"
-      stop_commands:
-        gamma:
-          - "mm mobs killall x"
-        beta:
-          - "mm mobs killall x"
-        alpha:
-          - "mm mobs killall x"
+        stop_commands:
+          - "mm mobs kill x"
 
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"

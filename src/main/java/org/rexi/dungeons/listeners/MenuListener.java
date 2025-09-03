@@ -87,11 +87,15 @@ public class MenuListener implements Listener {
                     new NamespacedKey(Dungeons.getInstance(), "dungeons-dungeon"),
                     PersistentDataType.STRING
             );
+            String prizeString = clicked.getItemMeta().getPersistentDataContainer().get(
+                    new NamespacedKey(Dungeons.getInstance(), "dungeons-prize"),
+                    PersistentDataType.STRING
+            );
 
             event.setCancelled(true);
             player.closeInventory();
 
-            if ((type != null && !type.isEmpty()) && (dungeon != null && !dungeon.isEmpty())) {
+            if ((type != null && !type.isEmpty()) && (dungeon != null && !dungeon.isEmpty()) && (prizeString != null && !prizeString.isEmpty())) {
                 if (!GameManager.possibleDungeons.contains(dungeon)) {
                     player.sendMessage(deserialize(config
                             .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
@@ -113,8 +117,15 @@ public class MenuListener implements Listener {
                     return;
                 }
 
-                int prize = config.getInt("start_menu.items."+type+".prize", 1);
                 double money = Dungeons.getEconomy().getBalance(player);
+                int prize;
+                try {
+                    prize = Integer.parseInt(prizeString);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(deserialize("&cOcurrió un error"));
+                    return;
+                }
+
                 if (money < prize) {
                     player.sendMessage(deserialize(config
                             .getString("no_money", "&cNo tienes dinero suficiente para comprar esto")));
@@ -123,7 +134,7 @@ public class MenuListener implements Listener {
 
                 EconomyResponse r = Dungeons.getEconomy().withdrawPlayer(player, prize);
                 if(!r.transactionSuccess()) {
-                    player.sendMessage(String.format("Ocurrió un error: %s", r.errorMessage));
+                    player.sendMessage(deserialize(String.format("&cOcurrió un error: %s", r.errorMessage)));
                     return;
                 }
 
