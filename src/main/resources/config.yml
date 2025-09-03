@@ -570,5 +570,5 @@ messages:
     join_others: "&c/dungeon join <dungeon> [jugador]"
     leave: "&c/dungeon leave <dungeon>"
     leave_others: "&c/dungeon leave [jugador]"
-    endgame: "&c/dungeon endgame <dungeon> <gamma/beta/alpha>"
+    endgame: "&c/dungeon endgame <dungeon>"
     start: "&c/dungeon start <dungeon>"

@@ -179,15 +179,14 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
                     return true;
                 }
-                if (args.length < 3) {
+                if (args.length < 2) {
                     sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage.endgame", "&c/dungeon endgame <dungeon> <gamma/beta/alpha>")));
+                            plugin.getConfig().getString("messages.usage.endgame", "&c/dungeon endgame <dungeon>")));
                     return true;
                 } else {
                     String dungeon = args[1];
-                    String type = args[2];
 
-                    GameManager.giveReward(dungeon, type);
+                    GameManager.giveReward(dungeon);
                     GameManager.cancelDungeonTimer(dungeon);
                     GameManager.stop(dungeon, true);
                 }
@@ -260,10 +259,6 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 List<String> players = new ArrayList<>();
                 for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
                 return players;
-            }
-            if (sub.equals("endgame") || sub.equals("start")) {
-                // Tipos posibles para endgame
-                return Arrays.asList("alpha", "beta", "gamma");
             }
         }
 

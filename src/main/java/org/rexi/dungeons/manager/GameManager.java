@@ -334,13 +334,15 @@ public class GameManager implements Listener {
         }
     }
 
-    public static void giveReward(String dungeon, String type) {
+    public static void giveReward(String dungeon) {
         if (!dungeonStarted.contains(dungeon)) {
             Bukkit.getConsoleSender().sendMessage(Component
                     .text("Se ha intentado dar la recompensa a la dungeon " + dungeon + " pero no estaba iniciada")
                     .color(NamedTextColor.RED));
             return;
         }
+
+        String type = dungeonType.get(dungeon);
 
         ConfigurationSection dungeonSec = getConfig().getConfigurationSection("rewards."+dungeon+"."+type);
 
