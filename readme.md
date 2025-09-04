@@ -5,3 +5,4 @@ dungeon.command
 - /dungeon leave <dungeon> [jugador] | dungeon.command.leave & dungeon.command.leave.others
 - /dungeon start <dungeon> | dungeon.command.start
 - /dungeon endgame <dungeon> | dungeon.command.endgame
+- /dungeon givelevel <player> <level> | dungeon.command.givelevel

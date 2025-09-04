@@ -1,6 +1,7 @@
 package org.rexi.dungeons.commands;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -13,7 +14,6 @@ import org.rexi.dungeons.manager.GameManager;
 import org.rexi.dungeons.menu.StartMenu;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,6 +64,24 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     } else {
                         Player target = Bukkit.getPlayerExact(args[2]);
                         String dungeon = args[1];
+
+                        if (target == null) {
+                            sender.sendMessage(Component.text("Ese jugador no existe").color(NamedTextColor.RED));
+                            return true;
+                        }
+
+                        int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
+                        int level = (plugin.getDungeonLevel(target)+1);
+
+                        if (level < dungeonLevel) {
+                            sender.sendMessage(deserialize(
+                                    plugin.getConfig()
+                                            .getString("messages.join_no_level",
+                                                    "&cNo puedes entrar en esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                            .replace("{level}", String.valueOf(level))
+                                            .replace("{required}", String.valueOf(dungeonLevel))));
+                            return true;
+                        }
 
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.usage.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
@@ -139,6 +157,11 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 }
             }
             case "start" -> {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(deserialize(plugin.getConfig()
+                            .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
+                    return true;
+                }
                 if (!sender.hasPermission("dungeon.command.start")) {
                     sender.sendMessage(deserialize(
                             plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
@@ -149,17 +172,25 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             plugin.getConfig().getString("messages.usage.start", "&c/dungeon start <dungeon>")));
                     return true;
                 } else {
-                    if (!(sender instanceof Player player)) {
-                        sender.sendMessage(deserialize(plugin.getConfig()
-                                .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
-                        return true;
-                    }
                     String dungeon = args[1];
 
                     if (!GameManager.possibleDungeons.contains(dungeon)) {
                         sender.sendMessage(deserialize(plugin.getConfig()
                                 .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
                                 .replace("{dungeon}", dungeon)));
+                        return true;
+                    }
+
+                    int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
+                    int level = (plugin.getDungeonLevel(player)+1);
+
+                    if (level < dungeonLevel) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig()
+                                        .getString("messages.start_no_level",
+                                                "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                        .replace("{level}", String.valueOf(level))
+                                        .replace("{required}", String.valueOf(dungeonLevel))));
                         return true;
                     }
 
@@ -191,6 +222,35 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     GameManager.stop(dungeon, true);
                 }
             }
+            case "givelevel" -> {
+                if (!sender.hasPermission("dungeon.command.givelevel")) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                    return true;
+                }
+                if (args.length < 3) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.usage.givelevel", "&c/dungeon givelevel <player> <level>")));
+                    return true;
+                } else {
+                    Player player = Bukkit.getPlayerExact(args[1]);
+
+                    int level;
+                    try {
+                        level = Integer.parseInt(args[2]);
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(deserialize("&cEso no es un número!"));
+                        return true;
+                    }
+
+                    if (player == null) {
+                        sender.sendMessage(Component.text("Ese jugador no existe").color(NamedTextColor.RED));
+                        return true;
+                    }
+
+                    Dungeons.getInstance().setDungeonLevel(player, level-1);
+                }
+            }
             default -> helpMessage(sender);
         }
         return true;
@@ -203,6 +263,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 .getString("messages.usage.endgame")));
         if (sender.hasPermission("dungeon.command.start")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.start")));
+        if (sender.hasPermission("dungeon.command.givelevel")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.givelevel")));
         if (sender.hasPermission("dungeon.command.join")) {
             if (sender.hasPermission("dungeon.command.join.others")) {
                 sender.sendMessage(deserialize(plugin.getConfig()
@@ -235,6 +297,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("dungeon.command.leave")) suggest.add("leave");
             if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
             if (sender.hasPermission("dungeon.command.start")) suggest.add("start");
+            if (sender.hasPermission("dungeon.command.givelevel")) suggest.add("givelevel");
             return suggest;
         }
 
@@ -247,7 +310,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     // Autocompleta con los nombres de las dungeons posibles
                     return new ArrayList<>(GameManager.possibleDungeons);
                 }
-                case "leave" -> {
+                case "leave", "givelevel" -> {
                     List<String> players = new ArrayList<>();
                     for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
                     return players;
@@ -261,6 +324,10 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 List<String> players = new ArrayList<>();
                 for (Player p : Bukkit.getOnlinePlayers()) players.add(p.getName());
                 return players;
+            } else if (sub.equals("givelevel")) {
+                List<String> nums = new ArrayList<>();
+                for (int i = 0; i < 7; i++) nums.add(String.valueOf(i));
+                return nums;
             }
         }
 

@@ -103,6 +103,19 @@ public class MenuListener implements Listener {
                     return;
                 }
 
+                int dungeonLevel = config.getInt("dungeons.bosses."+dungeon);
+                int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
+
+                if (level < dungeonLevel) {
+                    player.sendMessage(deserialize(
+                            config
+                                    .getString("messages.start_no_level",
+                                            "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                    .replace("{level}", String.valueOf(level))
+                                    .replace("{required}", String.valueOf(dungeonLevel))));
+                    return;
+                }
+
                 if (GameManager.dungeonStarted.contains(dungeon)
                         || GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
                     player.sendMessage(deserialize(

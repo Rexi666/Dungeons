@@ -75,6 +75,19 @@ public class GameManager implements Listener {
             return;
         }
 
+        int dungeonLevel = getConfig().getInt("dungeons.bosses."+dungeon);
+        int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
+
+        if (level < dungeonLevel) {
+            player.sendMessage(deserialize(
+                    getConfig()
+                            .getString("messages.join_no_level",
+                                    "&cNo puedes entrar en esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                            .replace("{level}", String.valueOf(level))
+                            .replace("{required}", String.valueOf(dungeonLevel))));
+            return;
+        }
+
         if (dungeonStarted.contains(dungeon)) {
             player.sendMessage(deserialize(
                     getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
@@ -358,6 +371,17 @@ public class GameManager implements Listener {
                         .text("No se han encontrado recompensas para la dungeon "+dungeon+ " "+ type)
                         .color(NamedTextColor.RED));
                 return;
+            }
+
+            int dungeonLevel = getConfig().getInt("dungeons.bosses."+dungeon);
+
+            for (UUID uuid : getPlayersInDungeonList(dungeon)) {
+                Player player = Bukkit.getPlayer(uuid);
+
+                if (player == null) return;
+
+                int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
+                if (level == dungeonLevel) Dungeons.getInstance().setDungeonLevel(player, dungeonLevel);
             }
 
             if (min != -1) {

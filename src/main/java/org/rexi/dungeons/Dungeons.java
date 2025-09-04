@@ -28,6 +28,7 @@ public final class Dungeons extends JavaPlugin {
     private static Economy econ = null;
 
     public final Map<UUID, String> playerClass = new HashMap<>();
+    public final Map<UUID, Integer> dungeonLevel = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -110,7 +111,7 @@ public final class Dungeons extends JavaPlugin {
         try {
             databaseManager.setPlayerClass(player.getUniqueId().toString(), chosenClass);
         } catch (SQLException e) {
-            getLogger().severe("Failed to save player chat color on the database: " + e.getMessage());
+            getLogger().severe("Failed to save player class on the database: " + e.getMessage());
         }
     }
 
@@ -123,6 +124,27 @@ public final class Dungeons extends JavaPlugin {
             playerClass.put(player.getUniqueId(), chosenClass);
         } catch (SQLException e) {
             getLogger().severe("Failed to load player class on the database: " + e.getMessage());
+        }
+    }
+
+    public void setDungeonLevel(Player player, int level) {
+        dungeonLevel.put(player.getUniqueId(), level);
+        try {
+            databaseManager.setDungeonLevel(player.getUniqueId().toString(), level);
+        } catch (SQLException e) {
+            getLogger().severe("Failed to save player dungeon level on the database: " + e.getMessage());
+        }
+    }
+
+    public Integer getDungeonLevel(Player player) {
+        return dungeonLevel.getOrDefault(player.getUniqueId(), 0);
+    }
+    public void getDungeonLevelFromDB(Player player) {
+        try {
+            int level = databaseManager.getDungeonLevel(player.getUniqueId().toString());
+            dungeonLevel.put(player.getUniqueId(), level);
+        } catch (SQLException e) {
+            getLogger().severe("Failed to load player dungeon level on the database: " + e.getMessage());
         }
     }
 

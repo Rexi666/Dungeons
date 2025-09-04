@@ -43,12 +43,22 @@ public class DatabaseManager implements Listener {
     }
 
     private void createTable() throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS player_class (" +
+        // Tabla player_class
+        String sql1 = "CREATE TABLE IF NOT EXISTS player_class (" +
                 "uuid VARCHAR(36) PRIMARY KEY," +
                 "chosen_class TEXT" +
                 ")";
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate(sql1);
+        }
+
+        // Tabla dungeon_level
+        String sql2 = "CREATE TABLE IF NOT EXISTS dungeon_level (" +
+                "uuid VARCHAR(36) PRIMARY KEY," +
+                "level INT" +
+                ")";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql2);
         }
     }
 
@@ -73,6 +83,27 @@ public class DatabaseManager implements Listener {
         return "";
     }
 
+    public void setDungeonLevel(String uuid, int level) throws SQLException {
+        String sql = "REPLACE INTO dungeon_level (uuid, level) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ps.setInt(2, level);
+            ps.executeUpdate();
+        }
+    }
+
+    public int getDungeonLevel(String uuid) throws SQLException {
+        String sql = "SELECT level FROM dungeon_level WHERE uuid = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("level");
+            }
+        }
+        return 0; // por defecto nivel 0 si no existe
+    }
+
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -87,6 +118,7 @@ public class DatabaseManager implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Dungeons.getInstance().getPlayerClassFromDB(player);
+        Dungeons.getInstance().getDungeonLevelFromDB(player);
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
     }
 }

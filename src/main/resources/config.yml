@@ -402,6 +402,7 @@ dungeons:
     jungla:
       teleport: dungeon;708;158;299;0;0 # where to teleport players when started
       out_cords: dungeon;708;158;299;0;0
+      level: 1
       gamma:
         prize: 10000
         start_command:
@@ -423,6 +424,7 @@ dungeons:
     castillo:
       teleport: dungeon;-679;151;1097;0;0
       out_cords: dungeon;-679;151;1097;0;0
+      level: 2
       gamma:
         prize: 10000
         start_command:
@@ -444,6 +446,7 @@ dungeons:
     nieve:
       teleport: dungeon;-1981;67;-1188;0;0
       out_cords: dungeon;-1981;67;-1188;0;0
+      level: 3
       gamma:
         prize: 10000
         start_command:
@@ -465,6 +468,7 @@ dungeons:
     cerezo:
       teleport: dungeon;1247;72;-1210;0;0
       out_cords: dungeon;1247;72;-1210;0;0
+      level: 4
       gamma:
         prize: 10000
         start_command:
@@ -486,6 +490,7 @@ dungeons:
     desierto:
       teleport: dungeon;905;75;2162;0;0
       out_cords: dungeon;905;75;2162;0;0
+      level: 5
       gamma:
         prize: 10000
         start_command:
@@ -507,6 +512,7 @@ dungeons:
     templo:
       teleport: dungeon;1666;63;1329;0;0
       out_cords: dungeon;1666;63;1329;0;0
+      level: 6
       gamma:
         prize: 10000
         start_command:
@@ -528,6 +534,7 @@ dungeons:
     mar:
       teleport: dungeon;2346;148;508;0;0
       out_cords: dungeon;2346;148;508;0;0
+      level: 7
       gamma:
         prize: 10000
         start_command:
@@ -592,6 +599,8 @@ messages:
   no_console: "&cEste comando sólo puede ser usado por jugadores"
   no_money: "&cNo tienes dinero suficiente para comprar esto"
   starting_dungeon: "&7[&dDUNGEONS&7] &b{player} &eestá iniciando la dungeon &b{dungeon} &een dificultad &b{type}"
+  start_no_level: "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}"
+  join_no_level: "&cNo puedes entrar en esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}"
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"
@@ -600,3 +609,4 @@ messages:
     leave_others: "&c/dungeon leave [jugador]"
     endgame: "&c/dungeon endgame <dungeon>"
     start: "&c/dungeon start <dungeon>"
+    givelevel: "&c/dungeon givelevel <player> <level>"
