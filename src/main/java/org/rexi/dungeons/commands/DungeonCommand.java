@@ -251,6 +251,61 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     Dungeons.getInstance().setDungeonLevel(player, level-1);
                 }
             }
+            case "menu" -> {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(deserialize(plugin.getConfig()
+                            .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
+                    return true;
+                }
+
+                if (!sender.hasPermission("dungeon.command.menu")) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                    return true;
+                }
+
+                if (args.length < 2) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.usage.menu", "&c/dungeon menu <dungeon>")));
+                    return true;
+                }
+
+                String dungeon = args[1];
+
+                if (!GameManager.possibleDungeons.contains(dungeon)) {
+                    sender.sendMessage(deserialize(plugin.getConfig()
+                            .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
+                            .replace("{dungeon}", dungeon)));
+                    return true;
+                }
+
+                int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
+                int level = (plugin.getDungeonLevel(player)+1);
+
+                if (level < dungeonLevel) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig()
+                                    .getString("messages.start_no_level",
+                                            "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                    .replace("{level}", String.valueOf(level))
+                                    .replace("{required}", String.valueOf(dungeonLevel))));
+                    return true;
+                }
+
+
+
+                if (GameManager.dungeonStarted.contains(dungeon)) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
+                    return true;
+                }
+
+                if (GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
+                    GameManager.join(player, dungeon);
+                } else {
+                    StartMenu.openMenu(player, dungeon);
+                }
+            }
             default -> helpMessage(sender);
         }
         return true;
@@ -265,6 +320,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 .getString("messages.usage.start")));
         if (sender.hasPermission("dungeon.command.givelevel")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.givelevel")));
+        if (sender.hasPermission("dungeon.command.menu")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.menu")));
         if (sender.hasPermission("dungeon.command.join")) {
             if (sender.hasPermission("dungeon.command.join.others")) {
                 sender.sendMessage(deserialize(plugin.getConfig()
@@ -295,6 +352,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("dungeon.command.reload")) suggest.add("reload");
             if (sender.hasPermission("dungeon.command.join")) suggest.add("join");
             if (sender.hasPermission("dungeon.command.leave")) suggest.add("leave");
+            if (sender.hasPermission("dungeon.command.menu")) suggest.add("menu");
             if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
             if (sender.hasPermission("dungeon.command.start")) suggest.add("start");
             if (sender.hasPermission("dungeon.command.givelevel")) suggest.add("givelevel");
@@ -306,7 +364,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 2) {
             switch (sub) {
-                case "join", "endgame", "start" -> {
+                case "join", "endgame", "start", "menu" -> {
                     // Autocompleta con los nombres de las dungeons posibles
                     return new ArrayList<>(GameManager.possibleDungeons);
                 }
