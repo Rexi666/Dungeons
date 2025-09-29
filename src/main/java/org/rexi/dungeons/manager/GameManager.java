@@ -12,11 +12,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -31,8 +30,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.rexi.dungeons.Dungeons;
 import org.rexi.dungeons.menu.ClassMenu;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -44,6 +47,8 @@ public class GameManager implements Listener {
     private static FileConfiguration getConfig() {
         return Dungeons.getInstance().getConfig();
     }
+
+    private static final Random random = new Random();
 
     public static final List<String> dungeonStarted = new ArrayList<>();
 
@@ -218,14 +223,11 @@ public class GameManager implements Listener {
         List<UUID> players = getPlayersInDungeonList(dungeon);
         Location teleport = getLocation("dungeons.bosses."+dungeon+".teleport");
         if (teleport != null) {
+            teleport.getChunk().load();
             for (UUID uuid : players) {
                 Player player = Bukkit.getPlayer(uuid);
                 if (player != null) player.teleport(teleport);
             }
-        }
-        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+"."+type+".start_commands");
-        for (String command : commands) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
         dungeonStarted.add(dungeon);
         dungeonStarting.put(dungeon, false);
@@ -235,6 +237,11 @@ public class GameManager implements Listener {
 
         // cuenta atrás para comprobar si muere el boss o se acaba el tiempo
         startDungeonTimer(dungeon, getConfig().getInt("times.game", 300));
+
+        List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+"."+type+".start_commands");
+        for (String command : commands) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        }
     }
 
     private static final Map<String, Integer> dungeonTimers = new HashMap<>();
@@ -337,6 +344,7 @@ public class GameManager implements Listener {
         }
         clearDungeon(dungeon);
         dungeonStarted.remove(dungeon);
+        clearChests(dungeon);
 
         List<UUID> players = new ArrayList<>(getPlayersInDungeonList(dungeon));
         for (UUID uuid : players) {
@@ -562,6 +570,72 @@ public class GameManager implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+    }
+
+    private static final Map<String, Set<Location>> filledChests = new HashMap<>();
+
+    @EventHandler
+    public void onChestOpen(InventoryOpenEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) return;
+        if (event.getInventory().getType() != InventoryType.CHEST) return;
+
+        Location loc = event.getInventory().getLocation();
+        if (loc == null) return;
+
+        String region = getRegionName(loc);
+        if (region == null) return;
+
+        // Solo dungeons activas
+        if (!dungeonStarted.contains(region)) return;
+        // Solo si el jugador está en esa dungeon
+        if (!getDungeonOfPlayer(player).equalsIgnoreCase(region)) return;
+
+        // Si ya lo rellenamos antes en esta dungeon
+        Set<Location> set = filledChests.computeIfAbsent(region, k -> new HashSet<>());
+        if (set.contains(loc)) return;
+
+        // Marcarlo como rellenado
+        set.add(loc);
+
+        // Llenar con loot
+        if (loc.getBlock().getState() instanceof Chest chest) {
+            fillChest(chest.getInventory());
+        }
+    }
+
+    private void fillChest(Inventory inv) {
+        FileConfiguration config = Dungeons.getInstance().getConfig();
+        int min = config.getInt("chests.min", 1);
+        int max = config.getInt("chests.max", 3);
+
+        int amount = random.nextInt(max - min + 1) + min;
+
+        List<String> rewards = new ArrayList<>(config.getStringList("chests.rewards"));
+        Collections.shuffle(rewards);
+
+        for (int i = 0; i < Math.min(amount, rewards.size()); i++) {
+            String[] parts = rewards.get(i).split(" ");
+            Material mat = Material.matchMaterial(parts[0]);
+            int count = parts.length > 1 ? Integer.parseInt(parts[1]) : 1;
+
+            if (mat != null) {
+                inv.addItem(new ItemStack(mat, count));
+            }
+        }
+    }
+
+    /** Limpia solo los cofres usados en esa dungeon */
+    public static void clearChests(String dungeon) {
+        Set<Location> set = filledChests.remove(dungeon);
+        if (set == null || set.isEmpty()) return;
+
+        for (Location loc : set) {
+            Block block = loc.getBlock();
+            if (block.getState() instanceof Chest chest) {
+                chest.getInventory().clear();
+                chest.update();
+            }
+        }
     }
 
     //--------------------------------

@@ -257,7 +257,6 @@ menu:
       material: GOLDEN_APPLE
       slot: 20
       lore:
-        - "&7Nivel: {level}"
         - ""
         - "&7- Regeneración"
         - "&7- Círculo de curación"
@@ -266,7 +265,6 @@ menu:
       material: BLAZE_ROD
       slot: 21
       lore:
-        - "&7Nivel: {level}"
         - ""
         - "&7- Ovejas guiadas"
         - "&7- Tormenta eléctrica"
@@ -275,7 +273,6 @@ menu:
       material: IRON_AXE
       slot: 22
       lore:
-        - "&7Nivel: {level}"
         - ""
         - "&7- Tomahok"
         - "&7- Ragnarok"
@@ -284,7 +281,6 @@ menu:
       material: ARROW
       slot: 23
       lore:
-        - "&7Nivel: {level}"
         - ""
         - "&7- Disparo explosivo"
         - "&7- Arco ametralladora"
@@ -293,7 +289,6 @@ menu:
       material: ANVIL
       slot: 24
       lore:
-        - "&7Nivel: {level}"
         - ""
         - "&7- Vida y defensa extra"
         - "&7- Castillo de piedra"
@@ -405,19 +400,19 @@ dungeons:
       level: 1
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -427,19 +422,19 @@ dungeons:
       level: 2
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -449,19 +444,19 @@ dungeons:
       level: 3
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -471,19 +466,19 @@ dungeons:
       level: 4
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -493,19 +488,19 @@ dungeons:
       level: 5
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -515,19 +510,19 @@ dungeons:
       level: 6
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
@@ -537,22 +532,33 @@ dungeons:
       level: 7
       gamma:
         prize: 10000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       beta:
         prize: 20000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
       alpha:
         prize: 30000
-        start_command:
+        start_commands:
           - "mm mobs spawn x cords"
         stop_commands:
           - "mm mobs kill x"
+
+chests:
+  min: 3
+  max: 6
+  rewards:
+    - DIAMOND 5
+    - IRON_INGOT 10
+    - TOTEM_OF_UNDYING 1
+    - GOLD_INGOT 10
+    - EMERALD 5
+    - NETHERITE_INGOT 1
 
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
