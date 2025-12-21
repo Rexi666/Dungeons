@@ -6,4 +6,6 @@ commands:
   dungeon:
     description: Comando principal de Dungeons
     aliases: [dg]
+  mensaje:
+    description: Enviar un comando a un jugador
 depend: [WorldGuard, Vault]

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
+import org.rexi.dungeons.commands.MensajeCommand;
 import org.rexi.dungeons.database.DatabaseManager;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
@@ -56,6 +57,9 @@ public final class Dungeons extends JavaPlugin {
         DungeonCommand dungeonCommand = new DungeonCommand(this);
         this.getCommand("dungeon").setExecutor(dungeonCommand);
         this.getCommand("dungeon").setTabCompleter(dungeonCommand);
+
+        MensajeCommand mensajeCommand = new MensajeCommand(this);
+        this.getCommand("mensaje").setExecutor(mensajeCommand);
 
         // listeners
 

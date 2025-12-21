@@ -607,6 +607,8 @@ messages:
   starting_dungeon: "&7[&dDUNGEONS&7] &b{player} &eestá iniciando la dungeon &b{dungeon} &een dificultad &b{type}"
   start_no_level: "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}"
   join_no_level: "&cNo puedes entrar en esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}"
+  player_not_found: "&cJugador no encontrado o no está en línea"
+  no_message: "&cDebes proporcionar un mensaje"
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"
@@ -617,3 +619,4 @@ messages:
     start: "&c/dungeon start <dungeon>"
     givelevel: "&c/dungeon givelevel <player> <level>"
     menu: "&c/dungeon menu <dungeon>"
+    mensaje: "&c/mensaje <player> <message>"
