@@ -306,6 +306,20 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     StartMenu.openMenu(player, dungeon);
                 }
             }
+            case "claimrewards" -> {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(deserialize(plugin.getConfig()
+                            .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
+                    return true;
+                }
+
+                if (!sender.hasPermission("dungeon.command.claimrewards")) {
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                    return true;
+                }
+                GameManager.claimRewards(player);
+            }
             default -> helpMessage(sender);
         }
         return true;
@@ -320,6 +334,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 .getString("messages.usage.start")));
         if (sender.hasPermission("dungeon.command.givelevel")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.givelevel")));
+        if (sender.hasPermission("dungeon.command.claimrewards")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.claimrewards")));
         if (sender.hasPermission("dungeon.command.menu")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.menu")));
         if (sender.hasPermission("dungeon.command.join")) {
@@ -356,6 +372,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
             if (sender.hasPermission("dungeon.command.start")) suggest.add("start");
             if (sender.hasPermission("dungeon.command.givelevel")) suggest.add("givelevel");
+            if (sender.hasPermission("dungeon.command.claimrewards")) suggest.add("claimrewards");
             return suggest;
         }
 

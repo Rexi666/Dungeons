@@ -38,9 +38,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.rexi.dungeons.Dungeons;
+import org.rexi.dungeons.database.DatabaseManager;
+import org.rexi.dungeons.database.PendingReward;
 import org.rexi.dungeons.menu.ClassMenu;
 import me.clip.placeholderapi.PlaceholderAPI;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class GameManager implements Listener {
@@ -371,9 +374,8 @@ public class GameManager implements Listener {
         ConfigurationSection dungeonSec = getConfig().getConfigurationSection("rewards."+dungeon+"."+type);
 
         if (dungeonSec != null) {
-            int min = dungeonSec.getInt("min", 1);
-            int max = dungeonSec.getInt("max", 1);
             List<String> possibilities = dungeonSec.getStringList("possibilities");
+            int requiredSpace = dungeonSec.getInt("inv_space", 0);
 
             if (possibilities.isEmpty()) {
                 Bukkit.getConsoleSender().sendMessage(Component
@@ -386,44 +388,40 @@ public class GameManager implements Listener {
 
             for (UUID uuid : getPlayersInDungeonList(dungeon)) {
                 Player player = Bukkit.getPlayer(uuid);
-
-                if (player == null) return;
+                if (player == null) continue;
 
                 int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
                 if (level == dungeonLevel) Dungeons.getInstance().setDungeonLevel(player, dungeonLevel);
             }
 
-            if (min != -1) {
-                for (UUID uuid : getPlayersInDungeonList(dungeon)) {
-                    Player player = Bukkit.getPlayer(uuid);
+            for (UUID uuid : getPlayersInDungeonList(dungeon)) {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player == null) continue;
 
-                    if (player == null) return;
-
-                    int amount = (int) (Math.random() * (max - min + 1)) + min;
-                    Collections.shuffle(possibilities);
-
-                    for (int i = 0; i < Math.min(amount, possibilities.size()); i++) {
-                        String cmd = possibilities.get(i).replace("{player}", player.getName());
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    }
-
-                    player.sendMessage(deserialize(
-                            getConfig().getString("messages.rewards", "&aHas recibido las recompensas de esta dungeon")));
-                }
-            } else {
-                for (UUID uuid : getPlayersInDungeonList(dungeon)) {
-                    Player player = Bukkit.getPlayer(uuid);
-
-                    if (player == null) return;
-
+                int freeSlots = getFreeInventorySlots(player);
+                if (freeSlots < requiredSpace) {
+                    List<String> cmds = new ArrayList<>();
                     for (String cmd : possibilities) {
-                        String command = cmd.replace("{player}", player.getName());
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                        cmds.add(cmd.replace("{player}", player.getName()));
                     }
 
+                    Dungeons.getInstance().addPendingReward(player.getUniqueId().toString(), requiredSpace, cmds);
                     player.sendMessage(deserialize(
-                            getConfig().getString("messages.rewards", "&aHas recibido las recompensas de esta dungeon")));
+                            getConfig().getString(
+                                    "messages.no-inventory-space",
+                                    "&cNo tienes espacio suficiente en el inventario. Usa &e/dungeon claimrewards"
+                            )
+                    ));
+                    continue;
                 }
+
+                for (String cmd : possibilities) {
+                    String command = cmd.replace("{player}", player.getName());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+
+                player.sendMessage(deserialize(
+                        getConfig().getString("messages.rewards", "&aHas recibido las recompensas de esta dungeon")));
             }
         } else {
             Bukkit.getConsoleSender().sendMessage(Component
@@ -772,6 +770,55 @@ public class GameManager implements Listener {
             bar.removeAll();
         }
     }
+
+    private static int getFreeInventorySlots(Player player) {
+        int free = 0;
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            if (item == null || item.getType() == Material.AIR) {
+                free++;
+            }
+        }
+        return free;
+    }
+
+    public static void claimRewards(Player player) {
+        PendingReward reward;
+
+        reward = Dungeons.getInstance().getPendingReward(player.getUniqueId().toString());
+
+        if (reward == null) {
+            player.sendMessage(deserialize(
+                    Dungeons.getInstance().getConfig()
+                            .getString("messages.no_pending_rewards", "&cNo tienes recompensas pendientes")
+            ));
+            return;
+        }
+
+        int freeSlots = getFreeInventorySlots(player);
+
+        if (freeSlots < reward.getRequiredSpace()) {
+            player.sendMessage(deserialize(
+                    Dungeons.getInstance().getConfig()
+                            .getString(
+                                    "messages.no_inventory_space_claim",
+                                    "&cNecesitas &e{space} &cespacios libres"
+                            ).replace("{space}", String.valueOf(reward.getRequiredSpace()))
+            ));
+            return;
+        }
+
+        for (String cmd : reward.getCommands()) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+        }
+
+        Dungeons.getInstance().removePendingReward(reward.getId());
+
+        player.sendMessage(deserialize(
+                Dungeons.getInstance().getConfig()
+                        .getString("messages.rewards_claimed", "&aHas reclamado tus recompensas pendientes")
+        ));
+    }
+
 
     public static Component deserialize(String input) {
         if (input.contains("<") && input.contains(">")) {

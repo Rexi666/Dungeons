@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
 import org.rexi.dungeons.commands.MensajeCommand;
 import org.rexi.dungeons.database.DatabaseManager;
+import org.rexi.dungeons.database.PendingReward;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
 import org.rexi.dungeons.manager.ClassManager;
@@ -17,6 +18,7 @@ import org.rexi.dungeons.manager.GameManager;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -149,6 +151,31 @@ public final class Dungeons extends JavaPlugin {
             dungeonLevel.put(player.getUniqueId(), level);
         } catch (SQLException e) {
             getLogger().severe("Failed to load player dungeon level on the database: " + e.getMessage());
+        }
+    }
+
+    public void addPendingReward(String uuid, int requiredSpace, List<String> cmds) {
+        try {
+            databaseManager.addPendingReward(uuid, requiredSpace, cmds);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public PendingReward getPendingReward(String uuid) {
+        try {
+            return databaseManager.getLatestPendingReward(uuid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void removePendingReward(int id) {
+        try {
+            databaseManager.deletePendingReward(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

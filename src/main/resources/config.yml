@@ -14,8 +14,7 @@ times: # seconds
 rewards:
   jungla:
     gamma:
-      min: 1 # dejar -1 para que de todas las recompensas
-      max: 3
+      inv_space: 6 # Espacio mínimo en el inventario para que se den las recompensas
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -24,8 +23,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -34,8 +32,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -45,8 +42,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   castillo:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -55,8 +51,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -65,8 +60,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -76,8 +70,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   nieve:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -86,8 +79,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -96,8 +88,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -107,8 +98,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   cerezo:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -117,8 +107,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -127,8 +116,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -138,8 +126,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   desierto:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -148,8 +135,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -158,8 +144,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -169,8 +154,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   templo:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -179,8 +163,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -189,8 +172,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -200,8 +182,7 @@ rewards:
         - "give {player} netherite_chestplate 1"
   montana:
     gamma:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} iron_sword 1"
         - "give {player} iron_ingot 1"
@@ -210,8 +191,7 @@ rewards:
         - "give {player} iron_shovel 1"
         - "give {player} iron_chestplate 1"
     beta:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} diamond_sword 1"
         - "give {player} diamond 1"
@@ -220,8 +200,7 @@ rewards:
         - "give {player} diamond_shovel 1"
         - "give {player} diamond_chestplate 1"
     alpha:
-      min: 1
-      max: 3
+      inv_space: 6
       possibilities:
         - "give {player} netherite_sword 1"
         - "give {player} netherite_ingot 1"
@@ -598,6 +577,10 @@ messages:
   time_over_title: "&cSe acabó el tiempo!"
   bossbar_timer: "&eTiempo restante: &b{time}"
   rewards: "&aHas recibido las recompensas de esta dungeon"
+  no-inventory-space: "&cNo tienes espacio suficiente en el inventario. Usa &e/dungeon claimrewards"
+  no_pending_rewards: "&cNo tienes recompensas pendientes"
+  no_inventory_space_claim: "&cNecesitas &e{space} &cespacios libres"
+  rewards_claimed: "&aHas reclamado tus recompensas pendientes"
   not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
   dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada! Puedes iniciarla con &b/dungeon start"
   cooldown: "&cEsa habilidad está en cooldown! {cooldown}"
@@ -620,3 +603,4 @@ messages:
     givelevel: "&c/dungeon givelevel <player> <level>"
     menu: "&c/dungeon menu <dungeon>"
     mensaje: "&c/mensaje <player> <message>"
+    claimrewards: "&c/dungeon claimrewards"

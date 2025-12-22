@@ -10,6 +10,7 @@ import org.rexi.dungeons.Dungeons;
 
 import java.io.File;
 import java.sql.*;
+import java.util.List;
 
 public class DatabaseManager implements Listener {
     private final JavaPlugin plugin;
@@ -60,6 +61,18 @@ public class DatabaseManager implements Listener {
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql2);
         }
+
+        // Tabla pending_rewards
+        String sql3 = "CREATE TABLE IF NOT EXISTS pending_rewards (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "uuid VARCHAR(36) NOT NULL," +
+                "required_space INT NOT NULL," +
+                "commands TEXT NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                ")";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql3);
+        }
     }
 
     public void setPlayerClass(String uuid, String chosen_class) throws SQLException {
@@ -102,6 +115,47 @@ public class DatabaseManager implements Listener {
             }
         }
         return 0; // por defecto nivel 0 si no existe
+    }
+
+    public void addPendingReward(String uuid, int requiredSpace, List<String> commands) throws SQLException {
+        String sql = "INSERT INTO pending_rewards (uuid, required_space, commands) VALUES (?, ?, ?)";
+
+        String joinedCommands = String.join(";;", commands);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ps.setInt(2, requiredSpace);
+            ps.setString(3, joinedCommands);
+            ps.executeUpdate();
+        }
+    }
+
+    public PendingReward getLatestPendingReward(String uuid) throws SQLException {
+        String sql = "SELECT * FROM pending_rewards WHERE uuid = ? ORDER BY id DESC LIMIT 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                int requiredSpace = rs.getInt("required_space");
+                String commandsRaw = rs.getString("commands");
+
+                List<String> commands = List.of(commandsRaw.split(";;"));
+
+                return new PendingReward(id, requiredSpace, commands);
+            }
+        }
+        return null;
+    }
+
+    public void deletePendingReward(int id) throws SQLException {
+        String sql = "DELETE FROM pending_rewards WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
     }
 
     public void close() {
