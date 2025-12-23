@@ -292,8 +292,6 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-
-
                 if (GameManager.dungeonStarted.contains(dungeon)) {
                     sender.sendMessage(deserialize(
                             plugin.getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));

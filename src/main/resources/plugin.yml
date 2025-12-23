@@ -1,5 +1,5 @@
 name: Dungeons
-version: '1.5'
+version: '1.6'
 main: org.rexi.dungeons.Dungeons
 api-version: '1.20'
 commands:
@@ -8,4 +8,4 @@ commands:
     aliases: [dg]
   mensaje:
     description: Enviar un comando a un jugador
-depend: [WorldGuard, Vault]
+depend: [WorldGuard, Vault, UltimateClans]

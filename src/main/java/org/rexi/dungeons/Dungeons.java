@@ -1,10 +1,12 @@
 package org.rexi.dungeons;
 
+import me.ulrich.clans.interfaces.UClans;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
@@ -29,6 +31,7 @@ public final class Dungeons extends JavaPlugin {
     private DatabaseManager databaseManager;
 
     private static Economy econ = null;
+    private UClans uClans;
 
     public final Map<UUID, String> playerClass = new HashMap<>();
     public final Map<UUID, Integer> dungeonLevel = new HashMap<>();
@@ -42,6 +45,12 @@ public final class Dungeons extends JavaPlugin {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) {
+            this.uClans = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
+        } else {
+            getServer().getPluginManager().disablePlugin(this);
         }
 
         // Database
@@ -68,11 +77,11 @@ public final class Dungeons extends JavaPlugin {
         graveListener = new GraveListener(this);
         Bukkit.getPluginManager().registerEvents(graveListener, this);
 
-        Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MenuListener(uClans), this);
 
         // Game manager
 
-        Bukkit.getPluginManager().registerEvents(new GameManager(), this);
+        Bukkit.getPluginManager().registerEvents(new GameManager(uClans), this);
         GameManager.loadPossibleDungeons();
 
         Bukkit.getPluginManager().registerEvents(new ClassManager(), this);

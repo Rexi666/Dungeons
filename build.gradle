@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.rexi'
-version = '1.5'
+version = '1.6'
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ repositories {
         url = 'https://repo.extendedclip.com/releases/'
     }
     maven {
-        name = "VaultAPI"
+        name = "Jitpack"
         url = 'https://jitpack.io'
     }
 }
@@ -31,6 +31,7 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.UlrichBR:UClans-API:8.15.6")
 }
 
 tasks {

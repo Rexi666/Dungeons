@@ -7,6 +7,8 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.papermc.paper.event.entity.EntityMoveEvent;
+import me.ulrich.clans.data.ClanData;
+import me.ulrich.clans.interfaces.UClans;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -26,7 +28,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -38,15 +39,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.rexi.dungeons.Dungeons;
-import org.rexi.dungeons.database.DatabaseManager;
 import org.rexi.dungeons.database.PendingReward;
 import org.rexi.dungeons.menu.ClassMenu;
 import me.clip.placeholderapi.PlaceholderAPI;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class GameManager implements Listener {
+
+    private static UClans uclans;
+
+    public GameManager(UClans uclans) {
+        this.uclans = uclans;
+    }
 
     private static FileConfiguration getConfig() {
         return Dungeons.getInstance().getConfig();
@@ -67,6 +72,7 @@ public class GameManager implements Listener {
     private static final Map<String, Integer> countdownTasks = new HashMap<>();
 
     public static final Map<String, Boolean> canStartDungeon = new HashMap<>();
+    public static final Map<String, ClanData> DungeonClan = new HashMap<>();
     public static final Map<String, String> dungeonType = new HashMap<>();
 
     private static final int maxPlayers = getConfig().getInt("dungeons.players.max", 5);
@@ -119,6 +125,24 @@ public class GameManager implements Listener {
             player.sendMessage(deserialize(
                     getConfig().getString("messages.join_max", "&cLa dungeon a la que intentaste entrar está llena")));
             return;
+        }
+
+        Optional<ClanData> optional_clan = uclans.getPlayerAPI().getPlayerClan(player.getUniqueId());
+
+        ClanData clan = null;
+
+        if (optional_clan.isPresent()) {
+            clan = optional_clan.get();
+        }
+
+        ClanData clandungeon = DungeonClan.get(dungeon);
+
+        if (clandungeon != null) {
+            if (clan == null || !Objects.equals(clandungeon.getId(), clan.getId())) {
+                player.sendMessage(deserialize(
+                        getConfig().getString("messages.dungeon_clan", "&cSolo los miembros del clan que inició la dungeon pueden unirse")));
+                return;
+            }
         }
 
         ClassMenu.openMenu(player);
@@ -236,6 +260,7 @@ public class GameManager implements Listener {
         dungeonStarted.add(dungeon);
         dungeonStarting.put(dungeon, false);
         canStartDungeon.put(dungeon, false);
+        DungeonClan.remove(dungeon);
 
         ClassManager.TankHealth(dungeon);
 
