@@ -73,6 +73,16 @@ public class DatabaseManager implements Listener {
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql3);
         }
+
+        String sql4 = "CREATE TABLE IF NOT EXISTS dungeon_cooldown (" +
+                "uuid VARCHAR(36) NOT NULL," +
+                "dungeon TEXT NOT NULL," +
+                "last_join BIGINT NOT NULL," +
+                "PRIMARY KEY (uuid, dungeon)" +
+                ")";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql4);
+        }
     }
 
     public void setPlayerClass(String uuid, String chosen_class) throws SQLException {
@@ -156,6 +166,29 @@ public class DatabaseManager implements Listener {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
+    }
+
+    public void setDungeonJoin(String uuid, String dungeon) throws SQLException {
+        String sql = "REPLACE INTO dungeon_cooldown (uuid, dungeon, last_join) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ps.setString(2, dungeon);
+            ps.setLong(3, System.currentTimeMillis());
+            ps.executeUpdate();
+        }
+    }
+
+    public Long getLastDungeonJoin(String uuid, String dungeon) throws SQLException {
+        String sql = "SELECT last_join FROM dungeon_cooldown WHERE uuid = ? AND dungeon = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, uuid);
+            ps.setString(2, dungeon);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("last_join");
+            }
+        }
+        return null;
     }
 
     public void close() {

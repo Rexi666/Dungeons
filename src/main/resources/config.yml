@@ -593,6 +593,7 @@ messages:
   dungeon_clan: "&cSolo los miembros del clan que inició la dungeon pueden unirse"
   player_not_found: "&cJugador no encontrado o no está en línea"
   no_message: "&cDebes proporcionar un mensaje"
+  join_cooldown: "&cDebes esperar {hours}h {minutes}m para volver a entrar en esta dungeon"
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"

@@ -78,6 +78,8 @@ public class GameManager implements Listener {
     private static final int maxPlayers = getConfig().getInt("dungeons.players.max", 5);
     private static final int minPlayers = getConfig().getInt("dungeons.players.min", 1);
 
+    private static final long DUNGEON_COOLDOWN = 24L * 60L * 60L * 1000L; // 24 horas en milisegundos
+
     //--------------------------------
     //           MÉTODOS             |
     //--------------------------------
@@ -143,6 +145,12 @@ public class GameManager implements Listener {
                         getConfig().getString("messages.dungeon_clan", "&cSolo los miembros del clan que inició la dungeon pueden unirse")));
                 return;
             }
+        }
+
+        boolean checkCooldown = Dungeons.getInstance().ReviewLastDungeonJoin(player, dungeon, DUNGEON_COOLDOWN);
+
+        if (!checkCooldown) {
+            return;
         }
 
         ClassMenu.openMenu(player);

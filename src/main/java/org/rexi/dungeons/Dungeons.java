@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.rexi.dungeons.manager.GameManager.deserialize;
+
 public final class Dungeons extends JavaPlugin {
 
     private GraveListener graveListener;
@@ -187,6 +189,35 @@ public final class Dungeons extends JavaPlugin {
             e.printStackTrace();
         }
     }
+
+    public boolean ReviewLastDungeonJoin (Player player, String dungeon, long DUNGEON_COOLDOWN) {
+        try {
+            Long lastJoin = databaseManager.getLastDungeonJoin(player.getUniqueId().toString(), dungeon);
+
+            if (lastJoin != null) {
+                long now = System.currentTimeMillis();
+                long remaining = (lastJoin + DUNGEON_COOLDOWN) - now;
+
+                if (remaining > 0) {
+                    long hours = remaining / (1000 * 60 * 60);
+                    long minutes = (remaining / (1000 * 60)) % 60;
+
+                    player.sendMessage(deserialize(
+                            getConfig().getString("messages.join_cooldown",
+                                            "&cDebes esperar {hours}h {minutes}m para volver a entrar en esta dungeon")
+                                    .replace("{hours}", String.valueOf(hours))
+                                    .replace("{minutes}", String.valueOf(minutes))
+                    ));
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
 
     public static Economy getEconomy() {
         return econ;
