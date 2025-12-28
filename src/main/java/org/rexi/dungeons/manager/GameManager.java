@@ -34,9 +34,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.rexi.dungeons.Dungeons;
@@ -878,6 +876,64 @@ public class GameManager implements Listener {
         player.sendMessage(deserialize("&cNo puedes usar comandos mientras estás en una dungeon."));
     }
 
+    @EventHandler
+    public void onEnderPearlUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+
+        if (!world.getName().equalsIgnoreCase(getConfig().getString("classes.world", "dungeon"))) {
+            return;
+        }
+
+        if (event.getItem() == null) {
+            return;
+        }
+
+        if (event.getItem().getType() == Material.ENDER_PEARL) {
+            event.setCancelled(true);
+            player.sendMessage(deserialize("&cNo puedes usar ender pearls en este mundo."));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+
+        if (!allDungeonPlayers.contains(player.getUniqueId())) {
+            return;
+        }
+
+        String respawnString = getConfig().getString("dungeons.respawn");
+        if (respawnString == null) {
+            return;
+        }
+
+        String[] parts = respawnString.split(";");
+        if (parts.length != 6) {
+            System.out.println("Formato inválido en dungeons.respawn");
+            return;
+        }
+
+        World world = Bukkit.getWorld(parts[0]);
+        if (world == null) {
+            System.out.println("Mundo no encontrado: " + parts[0]);
+            return;
+        }
+
+        try {
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
+            double z = Double.parseDouble(parts[3]);
+            float yaw = Float.parseFloat(parts[4]);
+            float pitch = Float.parseFloat(parts[5]);
+
+            Location respawn = new Location(world, x, y, z, yaw, pitch);
+            event.setRespawnLocation(respawn);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Coordenadas inválidas en dungeons.respawn");
+        }
+    }
 
     public static Component deserialize(String input) {
         if (input.contains("<") && input.contains(">")) {
