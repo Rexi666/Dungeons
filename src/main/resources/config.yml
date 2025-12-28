@@ -539,6 +539,14 @@ chests:
     - EMERALD 5
     - NETHERITE_INGOT 1
 
+allowed_commands:
+  - "msg"
+  - "tell"
+  - "r"
+  - "dungeon"
+  - "dungeons"
+  - "dg"
+
 messages:
   no_permission: "&cNo tienes permiso para ejecutar ese comando"
   reload: "&aConfiguración recargada"

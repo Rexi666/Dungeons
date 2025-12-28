@@ -34,6 +34,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -62,6 +63,8 @@ public class GameManager implements Listener {
     public static final List<String> dungeonStarted = new ArrayList<>();
 
     public static final Map<String, List<UUID>> dungeonPlayers = new HashMap<>();
+
+    public static final List<UUID> allDungeonPlayers = new ArrayList<>();
 
     public static final List<String> possibleDungeons = new ArrayList<>();
 
@@ -676,12 +679,14 @@ public class GameManager implements Listener {
 
     public static void addPlayerToDungeonList(String dungeon, Player player) {
         dungeonPlayers.computeIfAbsent(dungeon, k -> new ArrayList<>()).add(player.getUniqueId());
+        allDungeonPlayers.add(player.getUniqueId());
     }
 
     public static void removePlayerFromDungeonList(String dungeon, Player player) {
         List<UUID> players = dungeonPlayers.get(dungeon);
         if (players != null) {
             players.remove(player.getUniqueId());
+            allDungeonPlayers.remove(player.getUniqueId());
             if (players.isEmpty()) {
                 dungeonPlayers.remove(dungeon); // elimina la dungeon si ya no hay nadie
             }
@@ -850,6 +855,27 @@ public class GameManager implements Listener {
                 Dungeons.getInstance().getConfig()
                         .getString("messages.rewards_claimed", "&aHas reclamado tus recompensas pendientes")
         ));
+    }
+
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+
+        if (!allDungeonPlayers.contains(player.getUniqueId())) {
+            return;
+        }
+
+        String message = event.getMessage().toLowerCase();
+        String command = message.substring(1).split(" ")[0];
+
+        List<String> allowedCommands = getConfig().getStringList("allowed_commands");
+
+        if (allowedCommands.contains(command)) {
+            return;
+        }
+
+        event.setCancelled(true);
+        player.sendMessage(deserialize("&cNo puedes usar comandos mientras estás en una dungeon."));
     }
 
 

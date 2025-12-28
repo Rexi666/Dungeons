@@ -1,5 +1,5 @@
 name: Dungeons
-version: '1.7'
+version: '1.8'
 main: org.rexi.dungeons.Dungeons
 api-version: '1.20'
 commands:
