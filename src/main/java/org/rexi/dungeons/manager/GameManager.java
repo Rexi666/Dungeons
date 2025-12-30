@@ -903,35 +903,11 @@ public class GameManager implements Listener {
             return;
         }
 
-        String respawnString = getConfig().getString("dungeons.respawn");
-        if (respawnString == null) {
-            return;
-        }
-
-        String[] parts = respawnString.split(";");
-        if (parts.length != 6) {
-            System.out.println("Formato inválido en dungeons.respawn");
-            return;
-        }
-
-        World world = Bukkit.getWorld(parts[0]);
-        if (world == null) {
-            System.out.println("Mundo no encontrado: " + parts[0]);
-            return;
-        }
-
-        try {
-            double x = Double.parseDouble(parts[1]);
-            double y = Double.parseDouble(parts[2]);
-            double z = Double.parseDouble(parts[3]);
-            float yaw = Float.parseFloat(parts[4]);
-            float pitch = Float.parseFloat(parts[5]);
-
-            Location respawn = new Location(world, x, y, z, yaw, pitch);
-            event.setRespawnLocation(respawn);
-
-        } catch (NumberFormatException e) {
-            System.out.println("Coordenadas inválidas en dungeons.respawn");
+        String dungeon = getDungeonOfPlayer(player);
+        Location teleport = getLocation("dungeons.bosses."+dungeon+".teleport");
+        if (teleport != null) {
+            teleport.getChunk().load();
+            player.teleport(teleport);
         }
     }
 
