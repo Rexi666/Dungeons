@@ -218,6 +218,13 @@ public final class Dungeons extends JavaPlugin {
         }
     }
 
+    public void setLastDungeonJoin(String uuid, String dungeon) {
+        try {
+            databaseManager.setDungeonJoin(uuid, dungeon);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static Economy getEconomy() {
         return econ;

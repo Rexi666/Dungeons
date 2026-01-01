@@ -273,6 +273,13 @@ public class GameManager implements Listener {
 
         ClassManager.TankHealth(dungeon);
 
+        for (UUID uuid : getPlayersInDungeonList(dungeon)) {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p != null) {
+                Dungeons.getInstance().setLastDungeonJoin(String.valueOf(uuid), dungeon);
+            }
+        }
+
         // cuenta atrás para comprobar si muere el boss o se acaba el tiempo
         startDungeonTimer(dungeon, getConfig().getInt("times.game", 300));
 

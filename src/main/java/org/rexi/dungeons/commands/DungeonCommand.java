@@ -252,56 +252,97 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 }
             }
             case "menu" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage(deserialize(plugin.getConfig()
-                            .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
-                    return true;
-                }
+                if (sender instanceof Player player) {
+                    if (!sender.hasPermission("dungeon.command.menu")) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                        return true;
+                    }
 
-                if (!sender.hasPermission("dungeon.command.menu")) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
-                    return true;
-                }
+                    if (args.length < 2) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.usage.menu", "&c/dungeon menu <dungeon>")));
+                        return true;
+                    }
 
-                if (args.length < 2) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.usage.menu", "&c/dungeon menu <dungeon>")));
-                    return true;
-                }
+                    String dungeon = args[1];
 
-                String dungeon = args[1];
+                    if (!GameManager.possibleDungeons.contains(dungeon)) {
+                        sender.sendMessage(deserialize(plugin.getConfig()
+                                .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
+                                .replace("{dungeon}", dungeon)));
+                        return true;
+                    }
 
-                if (!GameManager.possibleDungeons.contains(dungeon)) {
-                    sender.sendMessage(deserialize(plugin.getConfig()
-                            .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
-                            .replace("{dungeon}", dungeon)));
-                    return true;
-                }
+                    int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
+                    int level = (plugin.getDungeonLevel(player)+1);
 
-                int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
-                int level = (plugin.getDungeonLevel(player)+1);
+                    if (level < dungeonLevel) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig()
+                                        .getString("messages.start_no_level",
+                                                "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                        .replace("{level}", String.valueOf(level))
+                                        .replace("{required}", String.valueOf(dungeonLevel))));
+                        return true;
+                    }
 
-                if (level < dungeonLevel) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig()
-                                    .getString("messages.start_no_level",
-                                            "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
-                                    .replace("{level}", String.valueOf(level))
-                                    .replace("{required}", String.valueOf(dungeonLevel))));
-                    return true;
-                }
+                    if (GameManager.dungeonStarted.contains(dungeon)) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
+                        return true;
+                    }
 
-                if (GameManager.dungeonStarted.contains(dungeon)) {
-                    sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
-                    return true;
-                }
-
-                if (GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
-                    GameManager.join(player, dungeon);
+                    if (GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
+                        GameManager.join(player, dungeon);
+                    } else {
+                        StartMenu.openMenu(player, dungeon);
+                    }
                 } else {
-                    StartMenu.openMenu(player, dungeon);
+                    if (args.length < 3) {
+                        sender.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.usage.menu_console", "&c/dungeon menu <dungeon> <player>")));
+                        return true;
+                    }
+                    String dungeon = args[1];
+                    Player target = Bukkit.getPlayer(args[2]);
+
+                    if (target == null) {
+                        sender.sendMessage(plugin.getConfig().getString("messages.wrong_player", "&cEse jugador no está conectado"));
+                        return true;
+                    }
+
+                    if (!GameManager.possibleDungeons.contains(dungeon)) {
+                        target.sendMessage(deserialize(plugin.getConfig()
+                                .getString("messages.join_nodungeon", "&cIntentaste entrar en la dungeon {dungeon} pero no existe")
+                                .replace("{dungeon}", dungeon)));
+                        return true;
+                    }
+
+                    int dungeonLevel = plugin.getConfig().getInt("dungeons.bosses."+dungeon);
+                    int level = (plugin.getDungeonLevel(target)+1);
+
+                    if (level < dungeonLevel) {
+                        target.sendMessage(deserialize(
+                                plugin.getConfig()
+                                        .getString("messages.start_no_level",
+                                                "&cNo puedes iniciar esta dungeon porque no tienes el nivel suficiente: Tu nivel {level}, necesario {required}")
+                                        .replace("{level}", String.valueOf(level))
+                                        .replace("{required}", String.valueOf(dungeonLevel))));
+                        return true;
+                    }
+
+                    if (GameManager.dungeonStarted.contains(dungeon)) {
+                        target.sendMessage(deserialize(
+                                plugin.getConfig().getString("messages.join_started", "&cEsa dungeon ya está en una incursión activa")));
+                        return true;
+                    }
+
+                    if (GameManager.dungeonStarting.getOrDefault(dungeon, false)) {
+                        GameManager.join(target, dungeon);
+                    } else {
+                        StartMenu.openMenu(target, dungeon);
+                    }
                 }
             }
             case "claimrewards" -> {

@@ -612,5 +612,6 @@ messages:
     start: "&c/dungeon start <dungeon>"
     givelevel: "&c/dungeon givelevel <player> <level>"
     menu: "&c/dungeon menu <dungeon>"
+    menu_console: "&c/dungeon menu <dungeon> <player>"
     mensaje: "&c/mensaje <player> <message>"
     claimrewards: "&c/dungeon claimrewards"
