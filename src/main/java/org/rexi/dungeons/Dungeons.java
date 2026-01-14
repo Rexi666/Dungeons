@@ -40,6 +40,8 @@ public final class Dungeons extends JavaPlugin {
     public final Map<UUID, String> playerClass = new HashMap<>();
     public final Map<UUID, Integer> dungeonLevel = new HashMap<>();
 
+    public Boolean DungeonsCleared = false;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -122,6 +124,8 @@ public final class Dungeons extends JavaPlugin {
             databaseManager.close();
         }
         graveListener.clearAllGraves();
+
+        GameManager.dungeonClearAll();
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha desactivado correctamente").color(NamedTextColor.RED));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));

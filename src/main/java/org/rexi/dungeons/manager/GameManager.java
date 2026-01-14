@@ -918,6 +918,33 @@ public class GameManager implements Listener {
         }
     }
 
+    public static void dungeonClearAll() {
+        ConfigurationSection bosses = getConfig().getConfigurationSection("dungeons.bosses");
+        if (bosses == null) return;
+
+        for (String dungeon : bosses.getKeys(false)) {
+            ConfigurationSection dungeonSection = bosses.getConfigurationSection(dungeon);
+            if (dungeonSection == null) continue;
+
+            for (String type : dungeonSection.getKeys(false)) {
+                List<String> commands = getConfig().getStringList(
+                        "dungeons.bosses." + dungeon + "." + type + ".stop_commands"
+                );
+
+                for (String command : commands) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        if (!Dungeons.getInstance().DungeonsCleared) {
+            dungeonClearAll();
+        }
+    }
+
     public static Component deserialize(String input) {
         if (input.contains("<") && input.contains(">")) {
             try {
