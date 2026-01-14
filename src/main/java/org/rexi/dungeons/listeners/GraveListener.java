@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.rexi.dungeons.Dungeons;
 
@@ -149,6 +150,8 @@ public class GraveListener implements Listener {
             armorStand.setCustomName(ChatColor.translateAlternateColorCodes('&', text));
             armorStand.setGravity(false);
             armorStand.setMarker(true);
+            armorStand.setMetadata("grave_hologram",
+                    new FixedMetadataValue(plugin, true));
         });
         return stand;
     }

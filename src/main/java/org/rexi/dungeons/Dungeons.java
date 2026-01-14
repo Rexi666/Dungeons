@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -89,6 +91,14 @@ public final class Dungeons extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ClassManager(), this);
         Bukkit.getScheduler().runTaskTimer(this, () -> { ClassManager.Repetitive(); }, 0L, 60L);
 
+        for (World world : Bukkit.getWorlds()) {
+            for (ArmorStand stand : world.getEntitiesByClass(ArmorStand.class)) {
+                if (stand.hasMetadata("grave_hologram")) {
+                    stand.remove();
+                }
+            }
+        }
+
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha activado correctamente").color(NamedTextColor.GREEN));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
 
@@ -111,9 +121,7 @@ public final class Dungeons extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.close();
         }
-        if (graveListener != null) {
-            graveListener.clearAllGraves();
-        }
+        graveListener.clearAllGraves();
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha desactivado correctamente").color(NamedTextColor.RED));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
