@@ -939,9 +939,14 @@ public class GameManager implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        String worldName = getConfig().getString("classes.world");
+        String playerWorld = event.getPlayer().getWorld().getName();
+        if (!worldName.equalsIgnoreCase(playerWorld)) return;
+
         if (!Dungeons.getInstance().DungeonsCleared) {
             dungeonClearAll();
+            Dungeons.getInstance().DungeonsCleared = true;
         }
     }
 
