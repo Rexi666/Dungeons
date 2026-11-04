@@ -206,6 +206,6 @@ public class DatabaseManager implements Listener {
         Player player = event.getPlayer();
         Dungeons.getInstance().getPlayerClassFromDB(player);
         Dungeons.getInstance().getDungeonLevelFromDB(player);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0);
     }
 }

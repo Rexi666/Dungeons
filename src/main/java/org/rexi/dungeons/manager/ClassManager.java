@@ -402,7 +402,7 @@ public class ClassManager implements Listener {
             Player player = Bukkit.getPlayer(uuid);
             if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
                 if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
+                    player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
                     player.setHealth(40.0); // para curarlo al máximo
 
                 }

@@ -1,6 +1,7 @@
 package org.rexi.dungeons;
 
-import me.ulrich.clans.interfaces.UClans;
+import com.aquaticstudios.aquaclan.api.AquaClanAPI;
+import com.aquaticstudios.aquaclan.api.AquaClanProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
@@ -8,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
@@ -35,7 +35,7 @@ public final class Dungeons extends JavaPlugin {
     private DatabaseManager databaseManager;
 
     private static Economy econ = null;
-    private UClans uClans;
+    private AquaClanAPI aquaClan;
 
     public final Map<UUID, String> playerClass = new HashMap<>();
     public final Map<UUID, Integer> dungeonLevel = new HashMap<>();
@@ -53,8 +53,8 @@ public final class Dungeons extends JavaPlugin {
             return;
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) {
-            this.uClans = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
+        if (Bukkit.getPluginManager().isPluginEnabled("AquaClan")) {
+            this.aquaClan = AquaClanProvider.get();
         } else {
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -83,11 +83,11 @@ public final class Dungeons extends JavaPlugin {
         graveListener = new GraveListener(this);
         Bukkit.getPluginManager().registerEvents(graveListener, this);
 
-        Bukkit.getPluginManager().registerEvents(new MenuListener(uClans), this);
+        Bukkit.getPluginManager().registerEvents(new MenuListener(aquaClan), this);
 
         // Game manager
 
-        Bukkit.getPluginManager().registerEvents(new GameManager(uClans), this);
+        Bukkit.getPluginManager().registerEvents(new GameManager(), this);
         GameManager.loadPossibleDungeons();
 
         Bukkit.getPluginManager().registerEvents(new ClassManager(), this);

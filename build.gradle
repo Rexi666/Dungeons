@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.rexi'
-version = '2.2'
+version = '2.3'
 
 repositories {
     mavenCentral()
@@ -27,11 +27,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.github.UlrichBR:UClans-API:8.15.6")
+    compileOnly('com.github.MilkBowl:VaultAPI:1.7') {
+        exclude group: 'org.bukkit', module: 'bukkit'
+    }
+    //compileOnly("com.github.UlrichBR:UClans-API:8.15.6")
+    compileOnly("com.github.aquatic-studios:AquaClan:1.1.1")
 }
 
 tasks {
@@ -39,7 +42,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.20")
+        minecraftVersion("1.21.8")
     }
 }
 

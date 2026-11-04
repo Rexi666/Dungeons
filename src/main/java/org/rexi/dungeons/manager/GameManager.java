@@ -1,5 +1,6 @@
 package org.rexi.dungeons.manager;
 
+import com.aquaticstudios.aquaclan.api.Clan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -7,8 +8,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.papermc.paper.event.entity.EntityMoveEvent;
-import me.ulrich.clans.data.ClanData;
-import me.ulrich.clans.interfaces.UClans;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -46,12 +45,6 @@ import java.util.*;
 
 public class GameManager implements Listener {
 
-    private static UClans uclans;
-
-    public GameManager(UClans uclans) {
-        this.uclans = uclans;
-    }
-
     private static FileConfiguration getConfig() {
         return Dungeons.getInstance().getConfig();
     }
@@ -73,7 +66,7 @@ public class GameManager implements Listener {
     private static final Map<String, Integer> countdownTasks = new HashMap<>();
 
     public static final Map<String, Boolean> canStartDungeon = new HashMap<>();
-    public static final Map<String, ClanData> DungeonClan = new HashMap<>();
+    public static final Map<String, Clan> DungeonClan = new HashMap<>();
     public static final Map<String, String> dungeonType = new HashMap<>();
 
     private static final int maxPlayers = getConfig().getInt("dungeons.players.max", 5);
@@ -130,22 +123,16 @@ public class GameManager implements Listener {
             return;
         }
 
-        Optional<ClanData> optional_clan = uclans.getPlayerAPI().getPlayerClan(player.getUniqueId());
+        Clan dungeonClan = DungeonClan.get(dungeon);
 
-        ClanData clan = null;
-
-        if (optional_clan.isPresent()) {
-            clan = optional_clan.get();
-        }
-
-        ClanData clandungeon = DungeonClan.get(dungeon);
-
-        if (clandungeon != null) {
-            if (clan == null || !Objects.equals(clandungeon.getId(), clan.getId())) {
-                player.sendMessage(deserialize(
-                        getConfig().getString("messages.dungeon_clan", "&cSolo los miembros del clan que inició la dungeon pueden unirse")));
-                return;
-            }
+        if (dungeonClan != null && !dungeonClan.isMember(player.getUniqueId())) {
+            player.sendMessage(deserialize(
+                    getConfig().getString(
+                            "messages.dungeon_clan",
+                            "&cSolo los miembros del clan que inició la dungeon pueden unirse"
+                    )
+            ));
+            return;
         }
 
         boolean checkCooldown = Dungeons.getInstance().ReviewLastDungeonJoin(player, dungeon, DUNGEON_COOLDOWN);
@@ -396,7 +383,7 @@ public class GameManager implements Listener {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 removePlayerFromDungeonList(dungeon, player);
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0);
                 player.setHealth(20.0);
             }
         }
@@ -554,7 +541,7 @@ public class GameManager implements Listener {
             } else {
                 if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
                     if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
-                        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
+                        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones
                         player.setHealth(40.0); // para curarlo al máximo
 
                     }
@@ -609,7 +596,7 @@ public class GameManager implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+        event.getPlayer().getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0);
     }
 
     private static final Map<String, Set<Location>> filledChests = new HashMap<>();

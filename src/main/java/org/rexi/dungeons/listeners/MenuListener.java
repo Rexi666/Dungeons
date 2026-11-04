@@ -1,7 +1,7 @@
 package org.rexi.dungeons.listeners;
 
-import me.ulrich.clans.data.ClanData;
-import me.ulrich.clans.interfaces.UClans;
+import com.aquaticstudios.aquaclan.api.AquaClanAPI;
+import com.aquaticstudios.aquaclan.api.Clan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -18,16 +18,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.rexi.dungeons.Dungeons;
 import org.rexi.dungeons.manager.GameManager;
 
-import java.util.Optional;
-
 import static org.rexi.dungeons.manager.GameManager.getDungeonOfPlayer;
 
 public class MenuListener implements Listener {
 
-    private UClans uclans;
+    private AquaClanAPI aquaClan;
 
-    public MenuListener(UClans uclans) {
-        this.uclans = uclans;
+    public MenuListener(AquaClanAPI aquaClan) {
+        this.aquaClan = aquaClan;
     }
 
     private static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
@@ -167,13 +165,7 @@ public class MenuListener implements Listener {
                         .replace("{dungeon}", dungeon)
                         .replace("{type}", type)));
 
-                Optional<ClanData> optional_clan = uclans.getPlayerAPI().getPlayerClan(player.getUniqueId());
-
-                ClanData clan = null;
-
-                if (optional_clan.isPresent()) {
-                    clan = optional_clan.get();
-                }
+                Clan clan = aquaClan.getClanByPlayer(player.getUniqueId()).orElse(null);
 
                 GameManager.canStartDungeon.put(dungeon, true);
                 GameManager.DungeonClan.put(dungeon, clan);
