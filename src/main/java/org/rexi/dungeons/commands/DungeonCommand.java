@@ -47,6 +47,9 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 }
                 plugin.reloadConfig();
                 GameManager.loadPossibleDungeons();
+                if (plugin.getGuideHologramManager() != null) {
+                    plugin.getGuideHologramManager().reload();
+                }
                 sender.sendMessage(deserialize(
                         plugin.getConfig().getString("messages.reload", "&aConfiguración recargada")));
             }

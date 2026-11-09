@@ -264,6 +264,22 @@ public class GameManager implements Listener {
         canStartDungeon.put(dungeon, false);
         DungeonClan.remove(dungeon);
 
+        for (UUID uuid : getPlayersInDungeonList(dungeon)) {
+            Player player = Bukkit.getPlayer(uuid);
+
+            if (player == null) {
+                continue;
+            }
+
+            if (Dungeons.getInstance()
+                    .getGuideHologramManager() != null) {
+
+                Dungeons.getInstance()
+                        .getGuideHologramManager()
+                        .resetGuide(player);
+            }
+        }
+
         ClassManager.TankHealth(dungeon);
 
         for (UUID uuid : getPlayersInDungeonList(dungeon)) {
@@ -698,6 +714,14 @@ public class GameManager implements Listener {
             if (players.isEmpty()) {
                 dungeonPlayers.remove(dungeon); // elimina la dungeon si ya no hay nadie
             }
+        }
+
+        if (Dungeons.getInstance()
+                .getGuideHologramManager() != null) {
+
+            Dungeons.getInstance()
+                    .getGuideHologramManager()
+                    .removeGuide(player.getUniqueId());
         }
     }
 

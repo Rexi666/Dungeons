@@ -19,6 +19,7 @@ import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
 import org.rexi.dungeons.manager.ClassManager;
 import org.rexi.dungeons.manager.GameManager;
+import org.rexi.dungeons.manager.GuideHologramManager;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public final class Dungeons extends JavaPlugin {
     private GraveListener graveListener;
     private static Dungeons instance;
     private DatabaseManager databaseManager;
+    private GuideHologramManager guideHologramManager;
 
     private static Economy econ = null;
     private AquaClanAPI aquaClan;
@@ -91,6 +93,16 @@ public final class Dungeons extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GameManager(), this);
         GameManager.loadPossibleDungeons();
 
+        // Guide hologram manager
+        guideHologramManager = new GuideHologramManager(this);
+
+        Bukkit.getPluginManager().registerEvents(
+                guideHologramManager,
+                this
+        );
+
+        guideHologramManager.start();
+
         Bukkit.getPluginManager().registerEvents(new ClassManager(), this);
         Bukkit.getScheduler().runTaskTimer(this, () -> { ClassManager.Repetitive(); }, 0L, 60L);
 
@@ -121,6 +133,10 @@ public final class Dungeons extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (guideHologramManager != null) {
+            guideHologramManager.shutdown();
+        }
+
         if (databaseManager != null) {
             databaseManager.close();
         }
@@ -241,5 +257,9 @@ public final class Dungeons extends JavaPlugin {
 
     public static Economy getEconomy() {
         return econ;
+    }
+
+    public GuideHologramManager getGuideHologramManager() {
+        return guideHologramManager;
     }
 }
