@@ -41,6 +41,7 @@ public class ClassManager implements Listener {
         for (String dungeon : GameManager.dungeonStarted) {
             for (UUID uuid : GameManager.getPlayersInDungeonList(dungeon)) {
                 Player player = Bukkit.getPlayer(uuid);
+                if (player == null || !player.isOnline()) continue;
                 if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("healer")) {
                     if (getConfig().getBoolean("classes.healer.abilities.regeneracion.enabled")) {
                         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5*20, 2, false, false));
@@ -269,6 +270,7 @@ public class ClassManager implements Listener {
         for (String dungeon : GameManager.dungeonStarted) {
             for (UUID uuid : GameManager.getPlayersInDungeonList(dungeon)) {
                 Player player = Bukkit.getPlayer(uuid);
+                if (player == null || !player.isOnline()) continue;
                 if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("berserker")) {
                     if (getConfig().getBoolean("classes.berserker.abilities.ragnarok.enabled")) {
                         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5*20, 1, false, false));
@@ -389,6 +391,7 @@ public class ClassManager implements Listener {
         for (String dungeon : GameManager.dungeonStarted) {
             for (UUID uuid : GameManager.getPlayersInDungeonList(dungeon)) {
                 Player player = Bukkit.getPlayer(uuid);
+                if (player == null || !player.isOnline()) continue;
                 if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
                     if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
                         player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 5*20, 3, false, false));
@@ -400,6 +403,7 @@ public class ClassManager implements Listener {
     public static void TankHealth(String dungeon) {
         for (UUID uuid : GameManager.getPlayersInDungeonList(dungeon)) {
             Player player = Bukkit.getPlayer(uuid);
+            if (player == null || !player.isOnline()) continue;
             if (Dungeons.getInstance().getPlayerClass(player).equalsIgnoreCase("tank")) {
                 if (getConfig().getBoolean("classes.tank.abilities.vida_defensa.enabled")) {
                     player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0); // 40 = 20 corazones

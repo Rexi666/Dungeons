@@ -212,6 +212,12 @@ public class GameManager implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         leave(player, false);
+
+        String dungeon = getDungeonOfPlayer(player);
+        if (dungeon.isEmpty()) return;
+
+        removePlayerFromDungeonList(dungeon, player);
+        joiningPlayers.remove(player.getUniqueId());
     }
 
     public static void start(String dungeon, boolean force) {
@@ -225,7 +231,7 @@ public class GameManager implements Listener {
             return;
         }
 
-        int dungeonSize = dungeonPlayers.get(dungeon).size();
+        int dungeonSize = getPlayersInDungeonList(dungeon).size();
         if (!force && dungeonPlayers.containsKey(dungeon) && dungeonSize < minPlayers) {
             List<UUID> players = getPlayersInDungeonList(dungeon);
             for (UUID uuid : players) {
@@ -374,9 +380,19 @@ public class GameManager implements Listener {
                     .text("No se ha podido ver el tipo de la dungeon "+dungeon+" y no se han dado recompensas")
                     .color(NamedTextColor.RED));
         }
-        clearDungeon(dungeon);
+
+        cancelCountdown(dungeon);
+        cancelDungeonTimer(dungeon);
         dungeonStarted.remove(dungeon);
+        dungeonStarting.remove(dungeon);
+        canStartDungeon.remove(dungeon);
+        DungeonClan.remove(dungeon);
+        dungeonType.remove(dungeon);
+        dungeonPlayers.remove(dungeon);
         clearChests(dungeon);
+        joiningPlayers.entrySet().removeIf(entry ->
+                dungeon.equalsIgnoreCase(entry.getValue())
+        );
 
         List<UUID> players = new ArrayList<>(getPlayersInDungeonList(dungeon));
         for (UUID uuid : players) {
@@ -700,6 +716,7 @@ public class GameManager implements Listener {
     }
 
     public static void loadPossibleDungeons() {
+        possibleDungeons.clear();
         ConfigurationSection bossSec = getConfig().getConfigurationSection("dungeons.bosses");
 
         if (bossSec != null) {

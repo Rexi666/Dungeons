@@ -19,10 +19,12 @@ public class DatabaseManager implements Listener {
     public DatabaseManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
+    private String DBtype;
 
     public void connect() throws SQLException {
         String type = plugin.getConfig().getString("database.type", "sqlite").toLowerCase();
         if (type.equals("mysql")) {
+            DBtype = "mysql";
             String host = plugin.getConfig().getString("database.mysql.host");
             int port = plugin.getConfig().getInt("database.mysql.port");
             String db = plugin.getConfig().getString("database.mysql.database");
@@ -35,6 +37,7 @@ public class DatabaseManager implements Listener {
                     pass
             );
         } else {
+            DBtype = "sqlite";
             File dbFile = new File(plugin.getDataFolder(), "data.db");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
         }
@@ -62,14 +65,29 @@ public class DatabaseManager implements Listener {
             stmt.executeUpdate(sql2);
         }
 
-        // Tabla pending_rewards
-        String sql3 = "CREATE TABLE IF NOT EXISTS pending_rewards (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "uuid VARCHAR(36) NOT NULL," +
-                "required_space INT NOT NULL," +
-                "commands TEXT NOT NULL," +
-                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                ")";
+
+        String sql3;
+        if (DBtype.equals("mysql")) {
+            sql3 = """
+        CREATE TABLE IF NOT EXISTS pending_rewards (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            uuid VARCHAR(36) NOT NULL,
+            required_space INT NOT NULL,
+            commands TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """;
+        } else {
+            sql3 = """
+        CREATE TABLE IF NOT EXISTS pending_rewards (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            uuid VARCHAR(36) NOT NULL,
+            required_space INTEGER NOT NULL,
+            commands TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """;
+        }
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql3);
         }

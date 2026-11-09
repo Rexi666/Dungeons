@@ -57,6 +57,7 @@ public final class Dungeons extends JavaPlugin {
             this.aquaClan = AquaClanProvider.get();
         } else {
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         // Database

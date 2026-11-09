@@ -248,6 +248,11 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
+                    if (level < 1) {
+                        sender.sendMessage(deserialize("&cEl nivel debe ser como mínimo 1."));
+                        return true;
+                    }
+
                     Dungeons.getInstance().setDungeonLevel(player, level-1);
                 }
             }
