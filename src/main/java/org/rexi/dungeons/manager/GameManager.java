@@ -37,7 +37,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.rexi.dungeons.Dungeons;
-import org.rexi.dungeons.database.PendingReward;
 import org.rexi.dungeons.menu.ClassMenu;
 import me.clip.placeholderapi.PlaceholderAPI;
 
@@ -86,7 +85,7 @@ public class GameManager implements Listener {
             return;
         }
 
-        int dungeonLevel = getConfig().getInt("dungeons.bosses."+dungeon);
+        int dungeonLevel = getConfig().getInt("dungeons.bosses."+dungeon+".level", 1);
         int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
 
         if (level < dungeonLevel) {
@@ -376,118 +375,112 @@ public class GameManager implements Listener {
 
     public static void stop(String dungeon, boolean force) {
         if (dungeonStarting.getOrDefault(dungeon, false)) {
-            int dungeonSize = dungeonPlayers.get(dungeon).size();
-            if (!force && dungeonPlayers.containsKey(dungeon) && dungeonSize < minPlayers) {
+            int dungeonSize = getPlayersInDungeonList(dungeon).size();
+
+            if (!force && dungeonSize < minPlayers) {
                 cancelCountdown(dungeon);
                 return;
             }
         }
 
-        if (!dungeonStarted.contains(dungeon)) return;
+        if (!dungeonStarted.contains(dungeon)
+                && !dungeonStarting.getOrDefault(dungeon, false)) {
+            return;
+        }
 
+        /*
+         * Copiar jugadores antes de eliminar cualquier estado.
+         */
+        List<UUID> players = new ArrayList<>(
+                getPlayersInDungeonList(dungeon)
+        );
+
+        /*
+         * Ejecutar comandos de parada antes de borrar dungeonType.
+         */
         String type = dungeonType.getOrDefault(dungeon, "");
+
         if (!type.isEmpty()) {
-            List<String> commands = getConfig().getStringList("dungeons.bosses."+dungeon+"."+type+".stop_commands");
+            List<String> commands = getConfig().getStringList(
+                    "dungeons.bosses."
+                            + dungeon
+                            + "."
+                            + type
+                            + ".stop_commands"
+            );
+
             for (String command : commands) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        command
+                );
             }
         } else {
-            Bukkit.getConsoleSender().sendMessage(Component
-                    .text("No se ha podido ver el tipo de la dungeon "+dungeon+" y no se han dado recompensas")
-                    .color(NamedTextColor.RED));
+            Bukkit.getConsoleSender().sendMessage(
+                    Component.text(
+                            "No se pudo encontrar la dificultad de "
+                                    + dungeon
+                                    + ". No se ejecutaron los stop_commands."
+                    ).color(NamedTextColor.RED)
+            );
         }
+
+        /*
+         * Expulsar a los jugadores antes de eliminar dungeonPlayers.
+         */
+        clearDungeon(dungeon);
 
         cancelCountdown(dungeon);
         cancelDungeonTimer(dungeon);
+        clearChests(dungeon);
+
+        /*
+         * Restaurar y limpiar jugadores.
+         */
+        for (UUID uuid : players) {
+            allDungeonPlayers.remove(uuid);
+            joiningPlayers.remove(uuid);
+
+            Player player = Bukkit.getPlayer(uuid);
+
+            if (player == null) {
+                continue;
+            }
+
+            if (Dungeons.getInstance()
+                    .getGuideHologramManager() != null) {
+                Dungeons.getInstance()
+                        .getGuideHologramManager()
+                        .removeGuide(uuid);
+            }
+
+            var maxHealth = player.getAttribute(
+                    Attribute.MAX_HEALTH
+            );
+
+            if (maxHealth != null) {
+                maxHealth.setBaseValue(20.0);
+                player.setHealth(
+                        Math.min(20.0, maxHealth.getValue())
+                );
+            }
+        }
+
+        /*
+         * Limpiar todo el estado de la dungeon al final.
+         */
+        dungeonPlayers.remove(dungeon);
         dungeonStarted.remove(dungeon);
         dungeonStarting.remove(dungeon);
         canStartDungeon.remove(dungeon);
         DungeonClan.remove(dungeon);
         dungeonType.remove(dungeon);
-        dungeonPlayers.remove(dungeon);
-        clearChests(dungeon);
-        joiningPlayers.entrySet().removeIf(entry ->
-                dungeon.equalsIgnoreCase(entry.getValue())
+
+        joiningPlayers.entrySet().removeIf(
+                entry -> dungeon.equalsIgnoreCase(
+                        entry.getValue()
+                )
         );
-
-        List<UUID> players = new ArrayList<>(getPlayersInDungeonList(dungeon));
-        for (UUID uuid : players) {
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null) {
-                removePlayerFromDungeonList(dungeon, player);
-                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0);
-                player.setHealth(20.0);
-            }
-        }
-    }
-
-    public static void giveReward(String dungeon) {
-        if (!dungeonStarted.contains(dungeon)) {
-            Bukkit.getConsoleSender().sendMessage(Component
-                    .text("Se ha intentado dar la recompensa a la dungeon " + dungeon + " pero no estaba iniciada")
-                    .color(NamedTextColor.RED));
-            return;
-        }
-
-        String type = dungeonType.get(dungeon);
-
-        ConfigurationSection dungeonSec = getConfig().getConfigurationSection("rewards."+dungeon+"."+type);
-
-        if (dungeonSec != null) {
-            List<String> possibilities = dungeonSec.getStringList("possibilities");
-            int requiredSpace = dungeonSec.getInt("inv_space", 0);
-
-            if (possibilities.isEmpty()) {
-                Bukkit.getConsoleSender().sendMessage(Component
-                        .text("No se han encontrado recompensas para la dungeon "+dungeon+ " "+ type)
-                        .color(NamedTextColor.RED));
-                return;
-            }
-
-            int dungeonLevel = getConfig().getInt("dungeons.bosses."+dungeon);
-
-            for (UUID uuid : getPlayersInDungeonList(dungeon)) {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) continue;
-
-                int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
-                if (level == dungeonLevel) Dungeons.getInstance().setDungeonLevel(player, dungeonLevel);
-            }
-
-            for (UUID uuid : getPlayersInDungeonList(dungeon)) {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) continue;
-
-                int freeSlots = getFreeInventorySlots(player);
-                if (freeSlots < requiredSpace) {
-                    List<String> cmds = new ArrayList<>();
-                    for (String cmd : possibilities) {
-                        cmds.add(cmd.replace("{player}", player.getName()));
-                    }
-
-                    Dungeons.getInstance().addPendingReward(player.getUniqueId().toString(), requiredSpace, cmds);
-                    player.sendMessage(deserialize(
-                            getConfig().getString(
-                                    "messages.no-inventory-space",
-                                    "&cNo tienes espacio suficiente en el inventario. Usa &e/dungeon claimrewards"
-                            )
-                    ));
-                    continue;
-                }
-
-                for (String cmd : possibilities) {
-                    String command = cmd.replace("{player}", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
-
-                player.sendMessage(deserialize(
-                        getConfig().getString("messages.rewards", "&aHas recibido las recompensas de esta dungeon")));
-            }
-        } else {
-            Bukkit.getConsoleSender().sendMessage(Component
-                    .text("No se han encontrado recompensas para la dungeon "+dungeon+ " "+ type)
-                    .color(NamedTextColor.RED));
-        }
     }
 
     protected static void clearDungeon(String dungeon) {
@@ -850,44 +843,6 @@ public class GameManager implements Listener {
             }
         }
         return free;
-    }
-
-    public static void claimRewards(Player player) {
-        PendingReward reward;
-
-        reward = Dungeons.getInstance().getPendingReward(player.getUniqueId().toString());
-
-        if (reward == null) {
-            player.sendMessage(deserialize(
-                    Dungeons.getInstance().getConfig()
-                            .getString("messages.no_pending_rewards", "&cNo tienes recompensas pendientes")
-            ));
-            return;
-        }
-
-        int freeSlots = getFreeInventorySlots(player);
-
-        if (freeSlots < reward.getRequiredSpace()) {
-            player.sendMessage(deserialize(
-                    Dungeons.getInstance().getConfig()
-                            .getString(
-                                    "messages.no_inventory_space_claim",
-                                    "&cNecesitas &e{space} &cespacios libres"
-                            ).replace("{space}", String.valueOf(reward.getRequiredSpace()))
-            ));
-            return;
-        }
-
-        for (String cmd : reward.getCommands()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-        }
-
-        Dungeons.getInstance().removePendingReward(reward.getId());
-
-        player.sendMessage(deserialize(
-                Dungeons.getInstance().getConfig()
-                        .getString("messages.rewards_claimed", "&aHas reclamado tus recompensas pendientes")
-        ));
     }
 
     @EventHandler

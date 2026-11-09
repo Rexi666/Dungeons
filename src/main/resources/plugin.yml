@@ -2,6 +2,9 @@ name: Dungeons
 version: '${version}'
 main: org.rexi.dungeons.Dungeons
 api-version: '1.21.8'
+permissions:
+  dungeon.command.rewards:
+    default: true
 commands:
   dungeon:
     description: Comando principal de Dungeons

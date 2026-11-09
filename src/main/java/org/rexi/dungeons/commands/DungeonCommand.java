@@ -111,6 +111,13 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                         }
                         Player target = Bukkit.getPlayerExact(args[2]);
 
+                        if (target == null) {
+                            sender.sendMessage(
+                                    deserialize("&cEse jugador no está conectado.")
+                            );
+                            return true;
+                        }
+
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.usage.join_forced", "&aForzando a &b{player} &aa unirse a la dungeon &b{dungeon}")
                                         .replace("{player}", target.getName())
@@ -134,6 +141,13 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     } else {
                         Player target = Bukkit.getPlayerExact(args[1]);
 
+                        if (target == null) {
+                            sender.sendMessage(
+                                    deserialize("&cEse jugador no está conectado.")
+                            );
+                            return true;
+                        }
+
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.usage.leave_forced", "&aForzando a &b{player} &aa salir de la dungeon")
                                         .replace("{player}", target.getName())));
@@ -150,6 +164,13 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         Player target = Bukkit.getPlayerExact(args[1]);
+
+                        if (target == null) {
+                            sender.sendMessage(
+                                    deserialize("&cEse jugador no está conectado.")
+                            );
+                            return true;
+                        }
 
                         sender.sendMessage(deserialize(
                                 plugin.getConfig().getString("messages.leave_forced", "&aForzando a &b{player} &aa salir de la dungeon")
@@ -220,9 +241,27 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 } else {
                     String dungeon = args[1];
 
-                    GameManager.giveReward(dungeon);
-                    GameManager.cancelDungeonTimer(dungeon);
-                    GameManager.stop(dungeon, true);
+                    if (!GameManager.dungeonStarted.contains(dungeon)) {
+                        sender.sendMessage(deserialize(
+                                "&cEsa dungeon no está iniciada."
+                        ));
+                        return true;
+                    }
+
+                    boolean success =
+                            plugin.getDungeonRewardManager()
+                                    .completeDungeon(dungeon);
+
+                    if (!success) {
+                        sender.sendMessage(deserialize(
+                                "&cNo se pudieron generar los cofres."
+                        ));
+                        return true;
+                    }
+
+                    sender.sendMessage(deserialize(
+                            "&aSe generaron las recompensas de la dungeon."
+                    ));
                 }
             }
             case "givelevel" -> {
@@ -236,27 +275,49 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                             plugin.getConfig().getString("messages.usage.givelevel", "&c/dungeon givelevel <player> <level>")));
                     return true;
                 } else {
-                    Player player = Bukkit.getPlayerExact(args[1]);
+                    Player target = Bukkit.getPlayerExact(args[1]);
 
-                    int level;
-                    try {
-                        level = Integer.parseInt(args[2]);
-                    } catch (NumberFormatException e) {
-                        player.sendMessage(deserialize("&cEso no es un número!"));
+                    if (target == null) {
+                        sender.sendMessage(
+                                Component.text(
+                                        "Ese jugador no existe",
+                                        NamedTextColor.RED
+                                )
+                        );
                         return true;
                     }
 
-                    if (player == null) {
-                        sender.sendMessage(Component.text("Ese jugador no existe").color(NamedTextColor.RED));
+                    int level;
+
+                    try {
+                        level = Integer.parseInt(args[2]);
+                    } catch (NumberFormatException exception) {
+                        sender.sendMessage(
+                                deserialize("&cEso no es un número.")
+                        );
                         return true;
                     }
 
                     if (level < 1) {
-                        sender.sendMessage(deserialize("&cEl nivel debe ser como mínimo 1."));
+                        sender.sendMessage(
+                                deserialize(
+                                        "&cEl nivel debe ser como mínimo 1."
+                                )
+                        );
                         return true;
                     }
 
-                    Dungeons.getInstance().setDungeonLevel(player, level-1);
+                    plugin.setDungeonLevel(target, level - 1);
+
+                    sender.sendMessage(
+                            deserialize(
+                                    "&aSe ha establecido el nivel de &f"
+                                            + target.getName()
+                                            + " &aa &f"
+                                            + level
+                                            + "&a."
+                            )
+                    );
                 }
             }
             case "menu" -> {
@@ -353,19 +414,31 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            case "claimrewards" -> {
+            case "rewards" -> {
                 if (!(sender instanceof Player player)) {
-                    sender.sendMessage(deserialize(plugin.getConfig()
-                            .getString("messages.no_console", "&cEste comando sólo puede ser usado por jugadores")));
+                    sender.sendMessage(deserialize(
+                            plugin.getConfig().getString(
+                                    "messages.no_console",
+                                    "&cEste comando solo puede usarlo un jugador."
+                            )
+                    ));
                     return true;
                 }
 
-                if (!sender.hasPermission("dungeon.command.claimrewards")) {
+                if (!sender.hasPermission(
+                        "dungeon.command.rewards"
+                )) {
                     sender.sendMessage(deserialize(
-                            plugin.getConfig().getString("messages.no_permission", "&cNo tienes permiso para ejecutar ese comando")));
+                            plugin.getConfig().getString(
+                                    "messages.no_permission",
+                                    "&cNo tienes permiso."
+                            )
+                    ));
                     return true;
                 }
-                GameManager.claimRewards(player);
+
+                plugin.getDungeonRewardManager()
+                        .openMenu(player);
             }
             default -> helpMessage(sender);
         }
@@ -381,8 +454,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
                 .getString("messages.usage.start")));
         if (sender.hasPermission("dungeon.command.givelevel")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.givelevel")));
-        if (sender.hasPermission("dungeon.command.claimrewards")) sender.sendMessage(deserialize(plugin.getConfig()
-                .getString("messages.usage.claimrewards")));
+        if (sender.hasPermission("dungeon.command.rewards")) sender.sendMessage(deserialize(plugin.getConfig()
+                .getString("messages.usage.rewards")));
         if (sender.hasPermission("dungeon.command.menu")) sender.sendMessage(deserialize(plugin.getConfig()
                 .getString("messages.usage.menu")));
         if (sender.hasPermission("dungeon.command.join")) {
@@ -419,7 +492,8 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("dungeon.command.endgame")) suggest.add("endgame");
             if (sender.hasPermission("dungeon.command.start")) suggest.add("start");
             if (sender.hasPermission("dungeon.command.givelevel")) suggest.add("givelevel");
-            if (sender.hasPermission("dungeon.command.claimrewards")) suggest.add("claimrewards");
+            if (sender.hasPermission("dungeon.command.rewards")) suggest.add("rewards");
+
             return suggest;
         }
 

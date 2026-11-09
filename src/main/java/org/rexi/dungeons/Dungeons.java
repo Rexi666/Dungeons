@@ -14,16 +14,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.rexi.dungeons.commands.DungeonCommand;
 import org.rexi.dungeons.commands.MensajeCommand;
 import org.rexi.dungeons.database.DatabaseManager;
-import org.rexi.dungeons.database.PendingReward;
 import org.rexi.dungeons.listeners.GraveListener;
 import org.rexi.dungeons.listeners.MenuListener;
 import org.rexi.dungeons.manager.ClassManager;
 import org.rexi.dungeons.manager.GameManager;
 import org.rexi.dungeons.manager.GuideHologramManager;
+import org.rexi.dungeons.menu.rewards.RewardChestMenu;
+import org.rexi.dungeons.menu.rewards.RewardMenuListener;
+import org.rexi.dungeons.menu.rewards.RewardPreviewMenu;
+import org.rexi.dungeons.rewards.DungeonRewardManager;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ public final class Dungeons extends JavaPlugin {
     private static Dungeons instance;
     private DatabaseManager databaseManager;
     private GuideHologramManager guideHologramManager;
+    private DungeonRewardManager dungeonRewardManager;
 
     private static Economy econ = null;
     private AquaClanAPI aquaClan;
@@ -93,6 +96,37 @@ public final class Dungeons extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GameManager(), this);
         GameManager.loadPossibleDungeons();
 
+        // Rewards
+
+        dungeonRewardManager =
+                new DungeonRewardManager(this);
+
+        RewardChestMenu rewardChestMenu =
+                new RewardChestMenu(
+                        this,
+                        dungeonRewardManager
+                );
+
+        RewardPreviewMenu rewardPreviewMenu =
+                new RewardPreviewMenu(
+                        this,
+                        dungeonRewardManager
+                );
+
+        dungeonRewardManager.setRewardChestMenu(
+                rewardChestMenu
+        );
+
+        Bukkit.getPluginManager().registerEvents(
+                new RewardMenuListener(
+                        this,
+                        dungeonRewardManager,
+                        rewardChestMenu,
+                        rewardPreviewMenu
+                ),
+                this
+        );
+
         // Guide hologram manager
         guideHologramManager = new GuideHologramManager(this);
 
@@ -137,12 +171,26 @@ public final class Dungeons extends JavaPlugin {
             guideHologramManager.shutdown();
         }
 
-        if (databaseManager != null) {
+        if (dungeonRewardManager != null) {
+            dungeonRewardManager.clear();
+        }
+
+        if (graveListener != null) {
+            graveListener.clearAllGraves();
+        }
+
+        try {
+            GameManager.dungeonClearAll();
+        } catch (Exception exception) {
+            getLogger().severe(
+                    "Error limpiando las dungeons: "
+                            + exception.getMessage()
+            );
+        }
+
+            if (databaseManager != null) {
             databaseManager.close();
         }
-        graveListener.clearAllGraves();
-
-        GameManager.dungeonClearAll();
 
         Bukkit.getConsoleSender().sendMessage(Component.text("Dungeons se ha desactivado correctamente").color(NamedTextColor.RED));
         Bukkit.getConsoleSender().sendMessage(Component.text("Gracias por usar plugins de Rexi666 :D").color(NamedTextColor.BLUE));
@@ -194,31 +242,6 @@ public final class Dungeons extends JavaPlugin {
         }
     }
 
-    public void addPendingReward(String uuid, int requiredSpace, List<String> cmds) {
-        try {
-            databaseManager.addPendingReward(uuid, requiredSpace, cmds);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public PendingReward getPendingReward(String uuid) {
-        try {
-            return databaseManager.getLatestPendingReward(uuid);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void removePendingReward(int id) {
-        try {
-            databaseManager.deletePendingReward(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public boolean ReviewLastDungeonJoin (Player player, String dungeon, long DUNGEON_COOLDOWN) {
         try {
             Long lastJoin = databaseManager.getLastDungeonJoin(player.getUniqueId().toString(), dungeon);
@@ -261,5 +284,9 @@ public final class Dungeons extends JavaPlugin {
 
     public GuideHologramManager getGuideHologramManager() {
         return guideHologramManager;
+    }
+
+    public DungeonRewardManager getDungeonRewardManager() {
+        return dungeonRewardManager;
     }
 }

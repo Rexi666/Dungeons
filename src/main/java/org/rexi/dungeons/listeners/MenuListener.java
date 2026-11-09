@@ -111,7 +111,7 @@ public class MenuListener implements Listener {
                     return;
                 }
 
-                int dungeonLevel = config.getInt("dungeons.bosses."+dungeon);
+                int dungeonLevel = config.getInt("dungeons.bosses."+dungeon+".level", 1);
                 int level = (Dungeons.getInstance().getDungeonLevel(player)+1);
 
                 if (level < dungeonLevel) {

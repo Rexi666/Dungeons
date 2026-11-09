@@ -11,203 +11,2949 @@ times: # seconds
   pre_game: 25
   game: 300
 
+reward-key:
+  material: TRIPWIRE_HOOK
+  custom-model-data: 10001
+  name: "&6&lLlave de cofre adicional"
+  lore:
+    - "&7Permite reclamar un segundo"
+    - "&7cofre al terminar una dungeon."
+  consume: true
+
 rewards:
   jungla:
-    gamma:
-      inv_space: 6 # Espacio mínimo en el inventario para que se den las recompensas
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   castillo:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   nieve:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   cerezo:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   desierto:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   templo:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
   montana:
-    gamma:
-      inv_space: 6
-      possibilities:
-        - "give {player} iron_sword 1"
-        - "give {player} iron_ingot 1"
-        - "give {player} iron_axe 1"
-        - "give {player} iron_pickaxe 1"
-        - "give {player} iron_shovel 1"
-        - "give {player} iron_chestplate 1"
-    beta:
-      inv_space: 6
-      possibilities:
-        - "give {player} diamond_sword 1"
-        - "give {player} diamond 1"
-        - "give {player} diamond_axe 1"
-        - "give {player} diamond_pickaxe 1"
-        - "give {player} diamond_shovel 1"
-        - "give {player} diamond_chestplate 1"
-    alpha:
-      inv_space: 6
-      possibilities:
-        - "give {player} netherite_sword 1"
-        - "give {player} netherite_ingot 1"
-        - "give {player} netherite_axe 1"
-        - "give {player} netherite_pickaxe 1"
-        - "give {player} netherite_shovel 1"
-        - "give {player} netherite_chestplate 1"
+    enabled: true
+
+    # Tiempo durante el cual se pueden reclamar los cofres.
+    expiration-seconds: 900
+
+    # Número normal de cofres reclamables.
+    default-claims: 1
+
+    menu:
+      title: "&8Recompensas: &5{dungeon}"
+      size: 54
+
+      info:
+        slot: 4
+        material: NETHER_STAR
+        name: "&d&lResumen de la dungeon"
+        lore:
+          - "&7Dungeon: &f{dungeon}"
+          - "&7Dificultad: &f{difficulty}"
+          - "&7Puntuación: &e{score}"
+          - ""
+          - "&7Cofres reclamados: &f{claims}/{maximum_claims}"
+
+      close:
+        slot: 49
+        material: BARRIER
+        name: "&cCerrar"
+
+    preview-menu:
+      title: "&8Contenido: {chest}"
+      size: 54
+
+      confirm:
+        slot: 40
+        material: LIME_DYE
+        name: "&a&lReclamar cofre"
+        lore:
+          - "&7Precio: {price}"
+          - ""
+          - "&eClic para confirmar"
+
+      back:
+        slot: 48
+        material: ARROW
+        name: "&eVolver"
+
+      close:
+        slot: 50
+        material: BARRIER
+        name: "&cCerrar"
+
+    scoring:
+      completion: 100
+      boss-kill: 100
+
+      remaining-time:
+        enabled: true
+        points-per-second: 1
+        maximum: 150
+
+      deaths:
+        penalty-per-death: 25
+
+    difficulty-modifiers:
+      gamma:
+        price-multiplier: 1.0
+        score-multiplier: 1.0
+
+      beta:
+        price-multiplier: 1.5
+        score-multiplier: 1.25
+
+      alpha:
+        price-multiplier: 2.5
+        score-multiplier: 1.5
+
+    chests:
+      wood:
+        enabled: true
+        minimum-score: 0
+        price: 0
+        material: CHEST
+        slot: 10
+        name: "&f&lCofre de madera"
+        lore:
+          - "&7Recompensa básica."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+
+        rolls:
+          minimum: 2
+          maximum: 3
+
+        allow-duplicates: false
+
+        loot:
+          coins_small:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: GOLD_NUGGET
+              name: "&6500-1.500 monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          iron:
+            type: ITEM
+            weight: 35
+            material: IRON_INGOT
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&fLingotes de hierro"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+          dungeon_fragment:
+            type: COMMAND
+            weight: 25
+            amount:
+              minimum: 1
+              maximum: 2
+            commands:
+              - "give {player} prismarine_shard {amount}"
+            display:
+              material: PRISMARINE_SHARD
+              name: "&bFragmento de dungeon"
+              lore:
+                - "&7Cantidad obtenida: &f{amount}"
+
+      gold:
+        enabled: true
+        minimum-score: 100
+        price: 5000
+        material: GOLD_BLOCK
+        slot: 12
+        name: "&6&lCofre de oro"
+        lore:
+          - "&7Recompensas poco comunes."
+          - ""
+          - "&7Precio: {price}"
+          - "&7Puntuación necesaria: &f{required_score}"
+          - ""
+          - "&eClic para revisar"
+        locked-lore:
+          - "&cCofre bloqueado"
+          - ""
+          - "&7Puntuación actual: &f{score}"
+          - "&7Puntuación necesaria: &f{required_score}"
+        rolls:
+          minimum: 3
+          maximum: 4
+        allow-duplicates: false
+        loot:
+          coins_medium:
+            type: MONEY
+            weight: 40
+            amount:
+              minimum: 1500
+              maximum: 5000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad obtenida: &6{amount}"
+
+          diamonds:
+            type: ITEM
+            weight: 30
+            material: DIAMOND
+            amount:
+              minimum: 2
+              maximum: 6
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          experience:
+            type: EXPERIENCE
+            weight: 30
+            amount:
+              minimum: 100
+              maximum: 300
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Experiencia obtenida: &a{amount}"
+
+      diamond:
+        enabled: true
+        minimum-score: 200
+        price: 15000
+        material: DIAMOND_BLOCK
+        slot: 14
+        name: "&b&lCofre de diamante"
+        rolls:
+          minimum: 3
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 45
+            amount:
+              minimum: 5000
+              maximum: 12000
+            display:
+              material: GOLD_INGOT
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          diamond:
+            type: ITEM
+            weight: 40
+            material: DIAMOND
+            amount:
+              minimum: 4
+              maximum: 12
+            display:
+              name: "&bDiamantes"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare_command:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} echo_shard {amount}"
+            display:
+              material: ECHO_SHARD
+              name: "&dFragmento raro"
+
+      emerald:
+        enabled: true
+        minimum-score: 300
+        price: 40000
+        material: EMERALD_BLOCK
+        slot: 16
+        name: "&a&lCofre de esmeralda"
+        rolls:
+          minimum: 4
+          maximum: 5
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 10000
+              maximum: 25000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          emerald:
+            type: ITEM
+            weight: 35
+            material: EMERALD
+            amount:
+              minimum: 8
+              maximum: 24
+            display:
+              name: "&aEsmeraldas"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          rare:
+            type: COMMAND
+            weight: 15
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} nether_star {amount}"
+            display:
+              material: NETHER_STAR
+              name: "&dRecompensa excepcional"
+
+      obsidian:
+        enabled: true
+        minimum-score: 400
+        price: 100000
+        material: OBSIDIAN
+        slot: 30
+        name: "&5&lCofre de obsidiana"
+        rolls:
+          minimum: 4
+          maximum: 6
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 25000
+              maximum: 75000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Gran cantidad de monedas"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 30
+            material: NETHERITE_SCRAP
+            amount:
+              minimum: 1
+              maximum: 4
+            display:
+              name: "&8Restos de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 5
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} netherite_ingot {amount}"
+            display:
+              material: NETHERITE_INGOT
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 15
+            amount:
+              minimum: 500
+              maximum: 1500
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aExperiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
+
+      bedrock:
+        enabled: true
+        minimum-score: 500
+        price: 250000
+        material: BEDROCK
+        slot: 32
+        name: "&8&lCofre de bedrock"
+        rolls:
+          minimum: 5
+          maximum: 7
+        allow-duplicates: false
+        loot:
+          coins:
+            type: MONEY
+            weight: 50
+            amount:
+              minimum: 50000
+              maximum: 150000
+            display:
+              material: GOLD_BLOCK
+              name: "&6Fortuna"
+              lore:
+                - "&7Cantidad: &6{amount}"
+
+          netherite:
+            type: ITEM
+            weight: 25
+            material: NETHERITE_INGOT
+            amount:
+              minimum: 1
+              maximum: 3
+            display:
+              name: "&8Lingotes de netherita"
+              lore:
+                - "&7Cantidad: &f{amount}"
+
+          legendary:
+            type: COMMAND
+            weight: 3
+            amount:
+              minimum: 1
+              maximum: 1
+            commands:
+              - "give {player} enchanted_golden_apple {amount}"
+            display:
+              material: ENCHANTED_GOLDEN_APPLE
+              name: "&6&lRecompensa legendaria"
+
+          experience:
+            type: EXPERIENCE
+            weight: 22
+            amount:
+              minimum: 1000
+              maximum: 3000
+            display:
+              material: EXPERIENCE_BOTTLE
+              name: "&aMucha experiencia"
+              lore:
+                - "&7Cantidad: &a{amount}"
 
 graves:
   world: "dungeon"
@@ -279,7 +3025,6 @@ start_menu:
     gamma:
       material: REDSTONE
       name: "&cGamma"
-      prize: 10000
       slot: 20
       lore:
         - ""
@@ -291,7 +3036,6 @@ start_menu:
     beta:
       material: LAPIS_LAZULI
       name: "&2Beta"
-      prize: 20000
       slot: 22
       lore:
         - ""
@@ -303,7 +3047,6 @@ start_menu:
     alpha:
       material: NETHERITE_INGOT
       name: "&6Alpha"
-      prize: 30000
       slot: 24
       lore:
         - ""
@@ -368,6 +3111,9 @@ classes: # Cooldown en segundos
         name: "&4Sismo"
         cooldown: 20
 
+guide_hologram:
+  default-update-ticks: 10
+
 dungeons:
   players:
     min: 1
@@ -381,7 +3127,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -422,7 +3167,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -463,7 +3207,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -504,7 +3247,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -545,7 +3287,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -586,7 +3327,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -627,7 +3367,6 @@ dungeons:
       guide_hologram:
         enabled: true
         activation-radius: 3.0
-        update-ticks: 10
         height: 1.8
         text:
           - "&e&lGUÍA DE LA DUNGEON"
@@ -717,11 +3456,6 @@ messages:
   time_over: "&c¡Se acabó el tiempo! Habéis perdido la dungeon."
   time_over_title: "&cSe acabó el tiempo!"
   bossbar_timer: "&eTiempo restante: &b{time}"
-  rewards: "&aHas recibido las recompensas de esta dungeon"
-  no-inventory-space: "&cNo tienes espacio suficiente en el inventario. Usa &e/dungeon claimrewards"
-  no_pending_rewards: "&cNo tienes recompensas pendientes"
-  no_inventory_space_claim: "&cNecesitas &e{space} &cespacios libres"
-  rewards_claimed: "&aHas reclamado tus recompensas pendientes"
   not_enough_players: "&cNo hay suficientes jugadores para empezar la dungeon"
   dungeon_not_started: "&cNo puedes entrar a esta dungeon, no está iniciada! Puedes iniciarla con &b/dungeon start"
   cooldown: "&cEsa habilidad está en cooldown! {cooldown}"
@@ -735,6 +3469,21 @@ messages:
   player_not_found: "&cJugador no encontrado o no está en línea"
   no_message: "&cDebes proporcionar un mensaje"
   join_cooldown: "&cDebes esperar {hours}h {minutes}m para volver a entrar en esta dungeon"
+  rewards:
+    disabled: "&cEsta dungeon no tiene recompensas configuradas."
+    unavailable: "&cNo tienes recompensas pendientes."
+    expired: "&cTus recompensas de esta dungeon han expirado."
+    locked: "&cNo has conseguido suficiente puntuación para este cofre."
+    already_claimed: "&cYa has reclamado este cofre."
+    maximum_claims: "&cYa has reclamado el máximo de cofres."
+    no_key: "&cNecesitas una llave de cofre adicional para reclamar otro."
+    no_money: "&cNo tienes dinero suficiente. Necesitas &6{price} monedas."
+    payment_error: "&cNo se pudo procesar el pago."
+    inventory_full: "&cNo tienes espacio suficiente en el inventario."
+    claimed: "&aHas reclamado el cofre &f{chest}&a."
+    generated: "&aTus cofres de recompensa están disponibles. Usa &e/dungeon rewards&a."
+    processing: "&cYa se está procesando otra compra."
+    invalid_chest: "&cEse cofre ya no está disponible."
   usage:
     reload: "&c/dungeon reload"
     join: "&c/dungeon join <dungeon>"
@@ -747,4 +3496,4 @@ messages:
     menu: "&c/dungeon menu <dungeon>"
     menu_console: "&c/dungeon menu <dungeon> <player>"
     mensaje: "&c/mensaje <player> <message>"
-    claimrewards: "&c/dungeon claimrewards"
+    rewards: "&c/dungeon rewards"
